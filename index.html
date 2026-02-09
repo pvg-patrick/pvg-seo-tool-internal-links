@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keyword-zu-Link-Konverter</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f5f5f5;
+  color: #222;
+  line-height: 1.5;
+  padding: 1.5rem;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.section {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.section h2 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 0.35rem;
+}
+
+.drop-zone {
+  border: 2px dashed #bbb;
+  border-radius: 6px;
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #888;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  margin-bottom: 0.75rem;
+}
+
+.drop-zone.dragover {
+  border-color: #4a90d9;
+  background: #eef4fc;
+}
+
+.drop-zone.has-file {
+  border-color: #4caf50;
+  background: #f1f8f1;
+  color: #333;
+}
+
+textarea {
+  width: 100%;
+  min-height: 140px;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.6rem;
+  resize: vertical;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.settings-row label {
+  margin-bottom: 0;
+  white-space: nowrap;
+}
+
+input[type="number"] {
+  width: 70px;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.hint {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+button {
+  padding: 0.6rem 1.4rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+
+.btn-primary {
+  background: #4a90d9;
+  color: #fff;
+}
+.btn-primary:hover { background: #3a7bc8; }
+.btn-primary:disabled { background: #a0c4e8; cursor: not-allowed; }
+
+.btn-secondary {
+  background: #eee;
+  color: #333;
+  border: 1px solid #ccc;
+}
+.btn-secondary:hover { background: #ddd; }
+
+.action-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.stats {
+  font-size: 0.85rem;
+  color: #555;
+  padding: 0.5rem 0;
+}
+
+.stats strong { color: #222; }
+
+#output-section { display: none; }
+
+.preview-frame {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-height: 300px;
+  background: #fff;
+}
+
+.error {
+  background: #fdecea;
+  color: #b71c1c;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+  display: none;
+}
+
+@media (max-width: 600px) {
+  body { padding: 0.75rem; }
+  .drop-zone { padding: 1.25rem 0.75rem; }
+  textarea { min-height: 100px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Keyword-zu-Link-Konverter</h1>
+  <p class="subtitle">Keywords in HTML-Dokumenten automatisch verlinken</p>
+
+  <div class="section">
+    <h2>1. HTML-Datei</h2>
+    <div class="drop-zone" id="drop-zone">
+      HTML-Datei hierher ziehen oder <strong>klicken</strong> zum Auswählen
+    </div>
+    <input type="file" id="file-input" accept=".html,.htm" hidden>
+  </div>
+
+  <div class="section">
+    <h2>2. Keyword-Mapping (JSON)</h2>
+    <label for="json-input">Keywords &rarr; URLs als JSON einfügen</label>
+    <textarea id="json-input" placeholder='{"keyword1": "https://example.com/seite1", "keyword2": "https://example.com/seite2"}'></textarea>
+  </div>
+
+  <div class="section">
+    <h2>3. Einstellungen &amp; Ausführen</h2>
+    <div class="settings-row">
+      <label for="max-links">Max. Links pro Keyword:</label>
+      <input type="number" id="max-links" value="1" min="0">
+      <span class="hint">0 = unbegrenzt</span>
+    </div>
+    <div style="margin-top: 1rem;">
+      <div class="error" id="error-msg"></div>
+      <div class="action-row">
+        <button class="btn-primary" id="btn-convert" disabled>HTML verlinken</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="output-section">
+    <h2>4. Ergebnis</h2>
+    <div class="stats" id="stats"></div>
+    <div class="action-row" style="margin-bottom: 0.75rem;">
+      <button class="btn-secondary" id="btn-download">HTML herunterladen</button>
+      <button class="btn-secondary" id="btn-copy">HTML kopieren</button>
+    </div>
+    <iframe class="preview-frame" id="preview-frame" sandbox="allow-same-origin"></iframe>
+  </div>
+</div>
+
+<script>
+(function() {
+  "use strict";
+
+  var dropZone = document.getElementById("drop-zone");
+  var fileInput = document.getElementById("file-input");
+  var jsonInput = document.getElementById("json-input");
+  var maxLinksInput = document.getElementById("max-links");
+  var btnConvert = document.getElementById("btn-convert");
+  var btnDownload = document.getElementById("btn-download");
+  var btnCopy = document.getElementById("btn-copy");
+  var outputSection = document.getElementById("output-section");
+  var statsEl = document.getElementById("stats");
+  var previewFrame = document.getElementById("preview-frame");
+  var errorMsg = document.getElementById("error-msg");
+
+  var htmlContent = "";
+  var resultHTML = "";
+  var fileName = "output.html";
+
+  // -- Drop zone --
+  dropZone.addEventListener("click", function() { fileInput.click(); });
+
+  dropZone.addEventListener("dragover", function(e) {
+    e.preventDefault();
+    dropZone.classList.add("dragover");
+  });
+
+  dropZone.addEventListener("dragleave", function() {
+    dropZone.classList.remove("dragover");
+  });
+
+  dropZone.addEventListener("drop", function(e) {
+    e.preventDefault();
+    dropZone.classList.remove("dragover");
+    var files = e.dataTransfer.files;
+    if (files.length > 0) loadFile(files[0]);
+  });
+
+  fileInput.addEventListener("change", function() {
+    if (fileInput.files.length > 0) loadFile(fileInput.files[0]);
+  });
+
+  function loadFile(file) {
+    if (!file.name.match(/\.html?$/i)) {
+      showError("Bitte eine HTML-Datei auswählen.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showError("Datei zu groß (max. 5 MB).");
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      htmlContent = e.target.result;
+      fileName = file.name.replace(/\.html?$/i, "") + "_linked.html";
+      dropZone.textContent = file.name + " (" + formatSize(file.size) + ")";
+      dropZone.classList.add("has-file");
+      updateButtonState();
+      hideError();
+    };
+    reader.readAsText(file);
+  }
+
+  function formatSize(bytes) {
+    if (bytes < 1024) return bytes + " B";
+    return (bytes / 1024).toFixed(1) + " KB";
+  }
+
+  function updateButtonState() {
+    btnConvert.disabled = !htmlContent;
+  }
+
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.style.display = "block";
+  }
+
+  function hideError() {
+    errorMsg.style.display = "none";
+  }
+
+  // -- Conversion --
+  btnConvert.addEventListener("click", function() {
+    hideError();
+
+    // Parse JSON
+    var jsonText = jsonInput.value.trim();
+    if (!jsonText) {
+      showError("Bitte JSON-Mapping eingeben.");
+      return;
+    }
+
+    var mapping;
+    try {
+      mapping = JSON.parse(jsonText);
+    } catch (e) {
+      showError("Ungültiges JSON: " + e.message);
+      return;
+    }
+
+    if (typeof mapping !== "object" || Array.isArray(mapping) || mapping === null) {
+      showError("JSON muss ein Objekt sein (z.B. {\"keyword\": \"url\"}).");
+      return;
+    }
+
+    var keywords = Object.keys(mapping);
+    if (keywords.length === 0) {
+      showError("JSON-Mapping ist leer.");
+      return;
+    }
+
+    if (keywords.length > 500) {
+      showError("Zu viele Keywords (max. 500).");
+      return;
+    }
+
+    var maxLinks = parseInt(maxLinksInput.value, 10);
+    if (isNaN(maxLinks) || maxLinks < 0) maxLinks = 1;
+
+    var result = processHTML(htmlContent, mapping, keywords, maxLinks);
+    resultHTML = result.html;
+
+    // Stats
+    statsEl.innerHTML = "<strong>" + result.keywordsFound + "</strong> Keywords gefunden, <strong>" + result.linksCreated + "</strong> Links erstellt";
+
+    // Preview
+    var blob = new Blob([resultHTML], { type: "text/html" });
+    previewFrame.src = URL.createObjectURL(blob);
+
+    outputSection.style.display = "block";
+    outputSection.scrollIntoView({ behavior: "smooth" });
+  });
+
+  function processHTML(html, mapping, keywords, maxLinks) {
+    // Sort keywords by length descending (longest first to handle overlaps)
+    var sorted = keywords.slice().sort(function(a, b) {
+      return b.length - a.length;
+    });
+
+    // Parse HTML using DOMParser
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(html, "text/html");
+
+    // Track link counts per keyword
+    var linkCounts = {};
+    var totalLinks = 0;
+    var keywordsMatched = {};
+
+    for (var i = 0; i < sorted.length; i++) {
+      linkCounts[sorted[i].toLowerCase()] = 0;
+    }
+
+    // Build regex for each keyword (whole word, case-insensitive)
+    var keywordData = sorted.map(function(kw) {
+      // Escape regex special chars
+      var escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      // Word boundary matching - use Unicode-aware boundaries
+      var pattern = new RegExp("(?<![\\wäöüÄÖÜß])" + escaped + "(?![\\wäöüÄÖÜß])", "gi");
+      return { keyword: kw, url: mapping[kw], regex: pattern, lcKey: kw.toLowerCase() };
+    });
+
+    // Walk text nodes, skip exclusion zones
+    processNode(doc.body);
+
+    function processNode(node) {
+      if (!node) return;
+
+      // Skip exclusion zones
+      if (node.nodeType === 1) {
+        var tag = node.tagName.toLowerCase();
+        if (tag === "a" || tag === "script" || tag === "style" ||
+            tag === "code" || tag === "pre" || tag === "textarea") {
+          return;
+        }
+      }
+
+      // Process text nodes
+      if (node.nodeType === 3) {
+        processTextNode(node);
+        return;
+      }
+
+      // Recurse into child nodes (snapshot to avoid mutation issues)
+      var children = Array.prototype.slice.call(node.childNodes);
+      for (var i = 0; i < children.length; i++) {
+        processNode(children[i]);
+      }
+    }
+
+    function processTextNode(textNode) {
+      var text = textNode.nodeValue;
+      if (!text || !text.trim()) return;
+
+      var fragments = [];
+      var consumed = new Array(text.length);
+      for (var c = 0; c < consumed.length; c++) consumed[c] = false;
+
+      // Collect all matches across all keywords
+      var allMatches = [];
+
+      for (var k = 0; k < keywordData.length; k++) {
+        var kd = keywordData[k];
+
+        // Check if max links reached for this keyword
+        if (maxLinks > 0 && linkCounts[kd.lcKey] >= maxLinks) continue;
+
+        kd.regex.lastIndex = 0;
+        var match;
+        while ((match = kd.regex.exec(text)) !== null) {
+          allMatches.push({
+            start: match.index,
+            end: match.index + match[0].length,
+            matchText: match[0],
+            kd: kd
+          });
+        }
+      }
+
+      // Sort matches by position, then by length descending (longer matches first)
+      allMatches.sort(function(a, b) {
+        if (a.start !== b.start) return a.start - b.start;
+        return (b.end - b.start) - (a.end - a.start);
+      });
+
+      // Greedily select non-overlapping matches
+      var selectedMatches = [];
+      for (var m = 0; m < allMatches.length; m++) {
+        var am = allMatches[m];
+
+        // Check if max links reached for this keyword
+        if (maxLinks > 0 && linkCounts[am.kd.lcKey] >= maxLinks) continue;
+
+        // Check overlap with already selected
+        var overlaps = false;
+        for (var s = 0; s < selectedMatches.length; s++) {
+          if (am.start < selectedMatches[s].end && am.end > selectedMatches[s].start) {
+            overlaps = true;
+            break;
+          }
+        }
+        if (overlaps) continue;
+
+        selectedMatches.push(am);
+        linkCounts[am.kd.lcKey]++;
+        keywordsMatched[am.kd.lcKey] = true;
+        totalLinks++;
+      }
+
+      if (selectedMatches.length === 0) return;
+
+      // Sort selected by position
+      selectedMatches.sort(function(a, b) { return a.start - b.start; });
+
+      // Build replacement fragment
+      var frag = document.createDocumentFragment();
+      var pos = 0;
+
+      for (var i = 0; i < selectedMatches.length; i++) {
+        var sm = selectedMatches[i];
+
+        // Text before match
+        if (sm.start > pos) {
+          frag.appendChild(document.createTextNode(text.substring(pos, sm.start)));
+        }
+
+        // Create link
+        var a = document.createElement("a");
+        a.href = sm.kd.url;
+        a.textContent = sm.matchText;
+        frag.appendChild(a);
+
+        pos = sm.end;
+      }
+
+      // Remaining text
+      if (pos < text.length) {
+        frag.appendChild(document.createTextNode(text.substring(pos)));
+      }
+
+      textNode.parentNode.replaceChild(frag, textNode);
+    }
+
+    // Serialize back to HTML string
+    // Reconstruct full document
+    var serializer = new XMLSerializer();
+    var outputHTML;
+
+    // Try to preserve original doctype and structure
+    // Get the serialized content from DOMParser result
+    var doctype = doc.doctype;
+    var doctypeStr = "";
+    if (doctype) {
+      doctypeStr = "<!DOCTYPE " + doctype.name;
+      if (doctype.publicId) doctypeStr += ' PUBLIC "' + doctype.publicId + '"';
+      if (doctype.systemId) doctypeStr += ' "' + doctype.systemId + '"';
+      doctypeStr += ">\n";
+    } else {
+      doctypeStr = "<!DOCTYPE html>\n";
+    }
+
+    outputHTML = doctypeStr + doc.documentElement.outerHTML;
+
+    return {
+      html: outputHTML,
+      linksCreated: totalLinks,
+      keywordsFound: Object.keys(keywordsMatched).length
+    };
+  }
+
+  // -- Download --
+  btnDownload.addEventListener("click", function() {
+    if (!resultHTML) return;
+    var blob = new Blob([resultHTML], { type: "text/html;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // -- Copy --
+  btnCopy.addEventListener("click", function() {
+    if (!resultHTML) return;
+    navigator.clipboard.writeText(resultHTML).then(function() {
+      var orig = btnCopy.textContent;
+      btnCopy.textContent = "Kopiert!";
+      setTimeout(function() { btnCopy.textContent = orig; }, 1500);
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
