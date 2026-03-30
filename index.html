@@ -444,8 +444,8 @@ textarea:focus {
       <option value="">– Manuell eingeben –</option>
     </select>
     <div class="server-hint" id="server-hint" style="display:none">
-      ⚠️ Vertical-Auswahl benötigt einen lokalen Server.
-      Starten mit: <code>python3 -m http.server 8080</code>, dann <code>http://localhost:8080</code> öffnen.
+      ⚠️ Vertical-Auswahl benötigt die Vercel-API.
+      Lokal starten mit: <code>vercel dev</code>, dann <code>http://localhost:3000</code> öffnen.
     </div>
   </div>
 
@@ -555,7 +555,7 @@ textarea:focus {
   var loadedWidgets = [];
 
   /* ── Vertical loader ──────────────────────────────────────────────── */
-  fetch("verticals.json")
+  fetch("/api/load?file=verticals.json")
     .then(function (r) {
       if (!r.ok) throw new Error("HTTP " + r.status);
       return r.json();
@@ -571,7 +571,7 @@ textarea:focus {
       });
     })
     .catch(function () {
-      // Running from file:// or server error – show hint
+      // API not reachable (local dev without vercel dev)
       serverHint.style.display = "flex";
     });
 
@@ -588,7 +588,7 @@ textarea:focus {
     }
 
     // Load keywords
-    fetch(kwFile)
+    fetch("/api/load?file=" + encodeURIComponent(kwFile))
       .then(function (r) { return r.json(); })
       .then(function (kw) {
         jsonInput.value = JSON.stringify(kw, null, 2);
@@ -600,7 +600,7 @@ textarea:focus {
     // Load widgets (optional)
     loadedWidgets = [];
     if (wFile) {
-      fetch(wFile)
+      fetch("/api/load?file=" + encodeURIComponent(wFile))
         .then(function (r) { return r.json(); })
         .then(function (widgets) {
           loadedWidgets = widgets;
@@ -768,9 +768,45 @@ textarea:focus {
       Array.prototype.slice.call(node.childNodes).forEach(processNode);
     }
 
+    // Patterns that must never be linked: shortcodes, template vars, JSON-like structures
+    var PROTECTED_PATTERNS = [
+      /\[[a-zA-Z_][\w\-]*(?:[^\[\]]{0,300})?\]/g,  // [shortcode attr="..."] / [/shortcode]
+      /\{\{[^}]{0,300}\}\}/g,                        // {{template_var}}
+      /\{%[^%]{0,200}%\}/g,                          // {%twig/jinja%}
+      /\{(?:"[^"]{0,100}"|'[^']{0,100}')\s*:/g,     // {"key": ... JSON object start
+    ];
+
+    function getProtectedRanges(text) {
+      var ranges = [];
+      PROTECTED_PATTERNS.forEach(function (pat) {
+        pat.lastIndex = 0;
+        var m;
+        while ((m = pat.exec(text)) !== null) {
+          // Extend range to end of line for JSON-start matches (covers rest of structure)
+          var end = m.index + m[0].length;
+          if (pat === PROTECTED_PATTERNS[3]) {
+            // JSON object start: protect until matching closing brace or end of text
+            var depth = 0;
+            for (var i = m.index; i < text.length; i++) {
+              if (text[i] === "{") depth++;
+              else if (text[i] === "}") { depth--; if (depth <= 0) { end = i + 1; break; } }
+            }
+          }
+          ranges.push({ start: m.index, end: end });
+        }
+      });
+      return ranges;
+    }
+
+    function isProtected(start, end, ranges) {
+      return ranges.some(function (r) { return start < r.end && end > r.start; });
+    }
+
     function processTextNode(textNode) {
       var text = textNode.nodeValue;
       if (!text || !text.trim()) return;
+
+      var protectedRanges = getProtectedRanges(text);
 
       var allMatches = [];
       keywordData.forEach(function (kd) {
@@ -778,7 +814,9 @@ textarea:focus {
         kd.regex.lastIndex = 0;
         var m;
         while ((m = kd.regex.exec(text)) !== null) {
-          allMatches.push({ start: m.index, end: m.index + m[0].length, matchText: m[0], kd: kd });
+          var mStart = m.index, mEnd = m.index + m[0].length;
+          if (isProtected(mStart, mEnd, protectedRanges)) continue;
+          allMatches.push({ start: mStart, end: mEnd, matchText: m[0], kd: kd });
         }
       });
 
