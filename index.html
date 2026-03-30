@@ -3,265 +3,647 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Keyword-zu-Link-Konverter</title>
+<title>SEO Internal Links Tool – PREISVERGLEICH.de</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ── Design Tokens (PVG Styleguide Feb 2026) ─────────────────────────── */
+:root {
+  --color-primary-dark:  #003043;
+  --color-primary:       #087E9F;
+  --color-primary-light: #429BB3;
+  --color-primary-bg:    #E8F4F8;
+  --color-secondary:     #C62000;
+
+  --color-gray-50:  #F8FAFB;
+  --color-gray-100: #F0F4F6;
+  --color-gray-200: #E1E8EC;
+  --color-gray-300: #C4D0D6;
+  --color-gray-500: #7A9099;
+  --color-gray-700: #3D5560;
+  --color-gray-900: #1A2D35;
+
+  --color-error-bg:     #FFF0EE;
+  --color-error-border: #F8C4BB;
+  --color-error-text:   #9C1A00;
+  --color-success-bg:   #E8F4F8;
+  --color-success-text: #003043;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-card:       0 2px 8px rgba(0, 48, 67, 0.10);
+  --shadow-card-hover: 0 4px 16px rgba(0, 48, 67, 0.15);
+  --transition: 0.2s ease;
+
+  --font: 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+/* ── Reset ───────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ── Base ────────────────────────────────────────────────────────────── */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background: #f5f5f5;
-  color: #222;
-  line-height: 1.5;
-  padding: 1.5rem;
+  font-family: var(--font);
+  background: var(--color-gray-100);
+  color: var(--color-gray-900);
+  line-height: 1.6;
+  min-height: 100vh;
 }
 
-h1 {
-  font-size: 1.5rem;
-  margin-bottom: 0.25rem;
+/* ── Header ──────────────────────────────────────────────────────────── */
+.site-header {
+  background: var(--color-primary-dark);
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.subtitle {
-  color: #666;
-  font-size: 0.9rem;
-  margin-bottom: 1.5rem;
+.site-header__brand {
+  color: var(--color-primary-light);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
 }
 
-.container {
-  max-width: 960px;
+.site-header__divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(255,255,255,0.2);
+}
+
+.site-header__title {
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.site-header__badge {
+  margin-left: auto;
+  background: rgba(8,126,159,0.35);
+  color: var(--color-primary-light);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+
+/* ── Layout ──────────────────────────────────────────────────────────── */
+.main {
+  max-width: 880px;
   margin: 0 auto;
+  padding: 32px 24px 64px;
 }
 
-.section {
+/* ── Card ────────────────────────────────────────────────────────────── */
+.card {
   background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 1.25rem;
-  margin-bottom: 1rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+  margin-bottom: 16px;
 }
 
-.section h2 {
-  font-size: 1rem;
-  margin-bottom: 0.75rem;
+.card__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
+.card__step {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-gray-900);
+}
+
+/* ── Form elements ───────────────────────────────────────────────────── */
 label {
   display: block;
+  font-size: 0.8rem;
   font-weight: 600;
-  font-size: 0.85rem;
-  margin-bottom: 0.35rem;
+  color: var(--color-gray-700);
+  margin-bottom: 6px;
 }
 
-.drop-zone {
-  border: 2px dashed #bbb;
-  border-radius: 6px;
-  padding: 2rem 1rem;
-  text-align: center;
-  color: #888;
+select,
+input[type="number"] {
+  font-family: var(--font);
+  font-size: 0.875rem;
+  color: var(--color-gray-900);
+  background: #fff;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+}
+
+select {
+  width: 100%;
   cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-  margin-bottom: 0.75rem;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237A9099' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
 }
 
-.drop-zone.dragover {
-  border-color: #4a90d9;
-  background: #eef4fc;
+select:focus,
+input[type="number"]:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(8, 126, 159, 0.15);
 }
 
-.drop-zone.has-file {
-  border-color: #4caf50;
-  background: #f1f8f1;
-  color: #333;
+input[type="number"] {
+  width: 80px;
 }
 
 textarea {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
   width: 100%;
-  min-height: 140px;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-  font-size: 0.8rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 0.6rem;
+  min-height: 148px;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
   resize: vertical;
+  color: var(--color-gray-900);
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  line-height: 1.5;
 }
 
+textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(8, 126, 159, 0.15);
+}
+
+/* ── Drop zone ───────────────────────────────────────────────────────── */
+.drop-zone {
+  border: 2px dashed var(--color-gray-300);
+  border-radius: var(--radius-md);
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--color-gray-500);
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: border-color var(--transition), background var(--transition), color var(--transition);
+  user-select: none;
+}
+
+.drop-zone strong { color: var(--color-primary); }
+
+.drop-zone:hover,
+.drop-zone.dragover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-bg);
+  color: var(--color-primary-dark);
+}
+
+.drop-zone.has-file {
+  border-color: var(--color-primary);
+  border-style: solid;
+  background: var(--color-primary-bg);
+  color: var(--color-primary-dark);
+  font-weight: 500;
+}
+
+/* ── Settings row ────────────────────────────────────────────────────── */
 .settings-row {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-top: 0.75rem;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
 .settings-row label {
   margin-bottom: 0;
-  white-space: nowrap;
-}
-
-input[type="number"] {
-  width: 70px;
-  padding: 0.35rem 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 0.9rem;
 }
 
 .hint {
   font-size: 0.75rem;
-  color: #888;
+  color: var(--color-gray-500);
 }
 
-button {
-  padding: 0.6rem 1.4rem;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.9rem;
+/* ── Checkbox ────────────────────────────────────────────────────────── */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-gray-700);
   cursor: pointer;
+  margin-bottom: 0;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 0.875rem;
   font-weight: 600;
-  transition: background 0.15s;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition);
+  white-space: nowrap;
 }
 
 .btn-primary {
-  background: #4a90d9;
+  background: var(--color-primary);
   color: #fff;
 }
-.btn-primary:hover { background: #3a7bc8; }
-.btn-primary:disabled { background: #a0c4e8; cursor: not-allowed; }
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-primary-light);
+  box-shadow: 0 2px 8px rgba(8, 126, 159, 0.30);
+}
+.btn-primary:disabled {
+  background: var(--color-gray-300);
+  color: var(--color-gray-500);
+  cursor: not-allowed;
+}
 
 .btn-secondary {
-  background: #eee;
-  color: #333;
-  border: 1px solid #ccc;
+  background: #fff;
+  color: var(--color-primary-dark);
+  border: 1px solid var(--color-gray-200);
 }
-.btn-secondary:hover { background: #ddd; }
+.btn-secondary:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
 
 .action-row {
   display: flex;
-  gap: 0.75rem;
+  gap: 10px;
   align-items: center;
   flex-wrap: wrap;
 }
 
-.stats {
-  font-size: 0.85rem;
-  color: #555;
-  padding: 0.5rem 0;
+/* ── Notice / Error ──────────────────────────────────────────────────── */
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin-bottom: 12px;
 }
 
-.stats strong { color: #222; }
+.notice--info {
+  background: var(--color-primary-bg);
+  color: var(--color-primary-dark);
+  border: 1px solid rgba(8,126,159,0.2);
+}
 
-#output-section { display: none; }
+.notice--error {
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+  border: 1px solid var(--color-error-border);
+}
 
+.notice--warning {
+  background: #FFF8E6;
+  color: #7A4F00;
+  border: 1px solid #F5D98A;
+}
+
+.notice { display: none; }
+.notice.visible { display: flex; }
+
+/* ── Divider ─────────────────────────────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: var(--color-gray-100);
+  margin: 16px 0;
+}
+
+/* ── Stats bar ───────────────────────────────────────────────────────── */
+.stats-bar {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  background: var(--color-gray-50);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-gray-200);
+  margin-bottom: 16px;
+}
+
+.stats-bar__item {
+  font-size: 0.8rem;
+  color: var(--color-gray-500);
+}
+
+.stats-bar__item strong {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-right: 4px;
+}
+
+/* ── Preview frame ───────────────────────────────────────────────────── */
 .preview-frame {
   width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  min-height: 300px;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-sm);
+  min-height: 320px;
   background: #fff;
 }
 
-.error {
-  background: #fdecea;
-  color: #b71c1c;
-  border: 1px solid #f5c6cb;
-  border-radius: 4px;
-  padding: 0.6rem 0.8rem;
-  font-size: 0.85rem;
-  margin-bottom: 0.75rem;
-  display: none;
+/* ── Server hint ─────────────────────────────────────────────────────── */
+.server-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #FFF8E6;
+  border: 1px solid #F5D98A;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 0.78rem;
+  color: #7A4F00;
+  line-height: 1.5;
+  margin-top: 8px;
 }
 
+.server-hint code {
+  background: rgba(0,0,0,0.08);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
-  body { padding: 0.75rem; }
-  .drop-zone { padding: 1.25rem 0.75rem; }
-  textarea { min-height: 100px; }
+  .main { padding: 16px 12px 48px; }
+  .card { padding: 16px; }
+  .drop-zone { padding: 24px 12px; }
+  textarea { min-height: 110px; }
+  .site-header__badge { display: none; }
 }
 </style>
 </head>
 <body>
-<div class="container">
-  <h1>Keyword-zu-Link-Konverter</h1>
-  <p class="subtitle">Keywords in HTML-Dokumenten automatisch verlinken</p>
 
-  <div class="section">
-    <h2>1. HTML-Datei</h2>
+<!-- ── Header ──────────────────────────────────────────────────────────── -->
+<header class="site-header">
+  <span class="site-header__brand">PREISVERGLEICH.de</span>
+  <div class="site-header__divider"></div>
+  <span class="site-header__title">SEO Internal Links Tool</span>
+  <span class="site-header__badge">Internes Tool</span>
+</header>
+
+<!-- ── Main ────────────────────────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- Step 1: Vertical -->
+  <div class="card">
+    <div class="card__header">
+      <div class="card__step">1</div>
+      <span class="card__title">Vertical / Thema wählen</span>
+    </div>
+    <label for="vertical-select">Themenbereich</label>
+    <select id="vertical-select">
+      <option value="">– Manuell eingeben –</option>
+    </select>
+    <div class="server-hint" id="server-hint" style="display:none">
+      ⚠️ Vertical-Auswahl benötigt einen lokalen Server.
+      Starten mit: <code>python3 -m http.server 8080</code>, dann <code>http://localhost:8080</code> öffnen.
+    </div>
+  </div>
+
+  <!-- Step 2: HTML Upload -->
+  <div class="card">
+    <div class="card__header">
+      <div class="card__step">2</div>
+      <span class="card__title">HTML-Datei</span>
+    </div>
     <div class="drop-zone" id="drop-zone">
       HTML-Datei hierher ziehen oder <strong>klicken</strong> zum Auswählen
     </div>
     <input type="file" id="file-input" accept=".html,.htm" hidden>
   </div>
 
-  <div class="section">
-    <h2>2. Keyword-Mapping (JSON)</h2>
-    <label for="json-input">Keywords &rarr; URLs als JSON einfügen</label>
-    <textarea id="json-input" placeholder='{"keyword1": "https://example.com/seite1", "keyword2": "https://example.com/seite2"}'></textarea>
+  <!-- Step 3: Keyword Mapping -->
+  <div class="card">
+    <div class="card__header">
+      <div class="card__step">3</div>
+      <span class="card__title">Keyword-Mapping (JSON)</span>
+    </div>
+    <label for="json-input">Keywords → URLs</label>
+    <textarea id="json-input" placeholder='{"Kreditkarte": "https://konto.preisvergleich.de/kreditkarte/", "Baufinanzierung": "https://kredit.preisvergleich.de/baufinanzierung/"}'></textarea>
+    <p class="hint" style="margin-top:6px">Format: <code style="font-family:var(--font-mono);font-size:0.75rem">{"keyword": "https://…"}</code> – wird beim Vertical-Wechsel automatisch befüllt, kann manuell überschrieben werden.</p>
   </div>
 
-  <div class="section">
-    <h2>3. Einstellungen &amp; Ausführen</h2>
-    <div class="settings-row">
-      <label for="max-links">Max. Links pro Keyword:</label>
+  <!-- Step 4: Settings + Run -->
+  <div class="card">
+    <div class="card__header">
+      <div class="card__step">4</div>
+      <span class="card__title">Einstellungen &amp; Ausführen</span>
+    </div>
+
+    <div class="settings-row" style="margin-bottom:16px">
+      <label for="max-links" style="margin-bottom:0">Max. Links pro Keyword:</label>
       <input type="number" id="max-links" value="1" min="0">
       <span class="hint">0 = unbegrenzt</span>
     </div>
-    <div style="margin-top: 1rem;">
-      <div class="error" id="error-msg"></div>
-      <div class="action-row">
-        <button class="btn-primary" id="btn-convert" disabled>HTML verlinken</button>
-      </div>
+
+    <div class="settings-row" style="margin-bottom:16px">
+      <label class="checkbox-label">
+        <input type="checkbox" id="use-widgets" checked>
+        Ratgeber-Boxen einfügen
+      </label>
+      <span class="hint" id="widget-hint">– kein Vertical gewählt –</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <div id="error-msg" class="notice notice--error"></div>
+
+    <div class="action-row">
+      <button class="btn btn-primary" id="btn-convert" disabled>HTML verlinken</button>
     </div>
   </div>
 
-  <div class="section" id="output-section">
-    <h2>4. Ergebnis</h2>
-    <div class="stats" id="stats"></div>
-    <div class="action-row" style="margin-bottom: 0.75rem;">
-      <button class="btn-secondary" id="btn-download">HTML herunterladen</button>
-      <button class="btn-secondary" id="btn-copy">HTML kopieren</button>
+  <!-- Step 5: Result -->
+  <div class="card" id="output-section" style="display:none">
+    <div class="card__header">
+      <div class="card__step">5</div>
+      <span class="card__title">Ergebnis</span>
     </div>
+
+    <div class="stats-bar" id="stats-bar">
+      <div class="stats-bar__item"><strong id="stat-keywords">0</strong> Keywords verlinkt</div>
+      <div class="stats-bar__item"><strong id="stat-links">0</strong> Links erstellt</div>
+      <div class="stats-bar__item" id="stat-widgets-wrap"><strong id="stat-widgets">0</strong> Ratgeber-Boxen eingefügt</div>
+    </div>
+
+    <div class="action-row" style="margin-bottom:16px">
+      <button class="btn btn-secondary" id="btn-download">↓ HTML herunterladen</button>
+      <button class="btn btn-secondary" id="btn-copy">Kopieren</button>
+    </div>
+
     <iframe class="preview-frame" id="preview-frame" sandbox="allow-same-origin"></iframe>
   </div>
-</div>
+
+</main>
 
 <script>
-(function() {
+(function () {
   "use strict";
 
-  var dropZone = document.getElementById("drop-zone");
-  var fileInput = document.getElementById("file-input");
-  var jsonInput = document.getElementById("json-input");
-  var maxLinksInput = document.getElementById("max-links");
-  var btnConvert = document.getElementById("btn-convert");
-  var btnDownload = document.getElementById("btn-download");
-  var btnCopy = document.getElementById("btn-copy");
-  var outputSection = document.getElementById("output-section");
-  var statsEl = document.getElementById("stats");
-  var previewFrame = document.getElementById("preview-frame");
-  var errorMsg = document.getElementById("error-msg");
+  /* ── DOM refs ─────────────────────────────────────────────────────── */
+  var verticalSelect = document.getElementById("vertical-select");
+  var serverHint     = document.getElementById("server-hint");
+  var dropZone       = document.getElementById("drop-zone");
+  var fileInput      = document.getElementById("file-input");
+  var jsonInput      = document.getElementById("json-input");
+  var maxLinksInput  = document.getElementById("max-links");
+  var useWidgetsCb   = document.getElementById("use-widgets");
+  var widgetHint     = document.getElementById("widget-hint");
+  var btnConvert     = document.getElementById("btn-convert");
+  var btnDownload    = document.getElementById("btn-download");
+  var btnCopy        = document.getElementById("btn-copy");
+  var outputSection  = document.getElementById("output-section");
+  var statKeywords   = document.getElementById("stat-keywords");
+  var statLinks      = document.getElementById("stat-links");
+  var statWidgets    = document.getElementById("stat-widgets");
+  var statWidgetsW   = document.getElementById("stat-widgets-wrap");
+  var previewFrame   = document.getElementById("preview-frame");
+  var errorMsg       = document.getElementById("error-msg");
 
   var htmlContent = "";
-  var resultHTML = "";
-  var fileName = "output.html";
+  var resultHTML  = "";
+  var fileName    = "output.html";
+  var loadedWidgets = [];
 
-  // -- Drop zone --
-  dropZone.addEventListener("click", function() { fileInput.click(); });
+  /* ── Vertical loader ──────────────────────────────────────────────── */
+  fetch("verticals.json")
+    .then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    })
+    .then(function (verticals) {
+      verticals.forEach(function (v) {
+        var opt = document.createElement("option");
+        opt.value = v.id;
+        opt.textContent = v.label;
+        opt.dataset.keywordsFile = v.keywordsFile;
+        opt.dataset.widgetsFile  = v.widgetsFile || "";
+        verticalSelect.appendChild(opt);
+      });
+    })
+    .catch(function () {
+      // Running from file:// or server error – show hint
+      serverHint.style.display = "flex";
+    });
 
-  dropZone.addEventListener("dragover", function(e) {
+  verticalSelect.addEventListener("change", function () {
+    var opt = verticalSelect.options[verticalSelect.selectedIndex];
+    var kwFile = opt.dataset.keywordsFile;
+    var wFile  = opt.dataset.widgetsFile;
+
+    if (!kwFile) {
+      // Manual mode selected
+      loadedWidgets = [];
+      updateWidgetHint();
+      return;
+    }
+
+    // Load keywords
+    fetch(kwFile)
+      .then(function (r) { return r.json(); })
+      .then(function (kw) {
+        jsonInput.value = JSON.stringify(kw, null, 2);
+      })
+      .catch(function () {
+        showError("Keywords-Datei konnte nicht geladen werden: " + kwFile);
+      });
+
+    // Load widgets (optional)
+    loadedWidgets = [];
+    if (wFile) {
+      fetch(wFile)
+        .then(function (r) { return r.json(); })
+        .then(function (widgets) {
+          loadedWidgets = widgets;
+          updateWidgetHint();
+        })
+        .catch(function () {
+          loadedWidgets = [];
+          updateWidgetHint();
+        });
+    } else {
+      updateWidgetHint();
+    }
+  });
+
+  function updateWidgetHint() {
+    if (loadedWidgets.length === 0) {
+      widgetHint.textContent = "– kein Vertical gewählt –";
+      useWidgetsCb.disabled = true;
+    } else {
+      widgetHint.textContent = loadedWidgets.length + " Widget" + (loadedWidgets.length !== 1 ? "s" : "") + " geladen";
+      useWidgetsCb.disabled = false;
+    }
+  }
+
+  /* ── Drop zone ────────────────────────────────────────────────────── */
+  dropZone.addEventListener("click", function () { fileInput.click(); });
+
+  dropZone.addEventListener("dragover", function (e) {
     e.preventDefault();
     dropZone.classList.add("dragover");
   });
 
-  dropZone.addEventListener("dragleave", function() {
+  dropZone.addEventListener("dragleave", function () {
     dropZone.classList.remove("dragover");
   });
 
-  dropZone.addEventListener("drop", function(e) {
+  dropZone.addEventListener("drop", function (e) {
     e.preventDefault();
     dropZone.classList.remove("dragover");
-    var files = e.dataTransfer.files;
-    if (files.length > 0) loadFile(files[0]);
+    if (e.dataTransfer.files.length > 0) loadFile(e.dataTransfer.files[0]);
   });
 
-  fileInput.addEventListener("change", function() {
+  fileInput.addEventListener("change", function () {
     if (fileInput.files.length > 0) loadFile(fileInput.files[0]);
   });
 
@@ -275,12 +657,12 @@ button {
       return;
     }
     var reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
       htmlContent = e.target.result;
       fileName = file.name.replace(/\.html?$/i, "") + "_linked.html";
-      dropZone.textContent = file.name + " (" + formatSize(file.size) + ")";
+      dropZone.textContent = "✓  " + file.name + " (" + formatSize(file.size) + ")";
       dropZone.classList.add("has-file");
-      updateButtonState();
+      btnConvert.disabled = false;
       hideError();
     };
     reader.readAsText(file);
@@ -291,24 +673,20 @@ button {
     return (bytes / 1024).toFixed(1) + " KB";
   }
 
-  function updateButtonState() {
-    btnConvert.disabled = !htmlContent;
-  }
-
+  /* ── Error / notice helpers ───────────────────────────────────────── */
   function showError(msg) {
     errorMsg.textContent = msg;
-    errorMsg.style.display = "block";
+    errorMsg.classList.add("visible");
   }
 
   function hideError() {
-    errorMsg.style.display = "none";
+    errorMsg.classList.remove("visible");
   }
 
-  // -- Conversion --
-  btnConvert.addEventListener("click", function() {
+  /* ── Convert ──────────────────────────────────────────────────────── */
+  btnConvert.addEventListener("click", function () {
     hideError();
 
-    // Parse JSON
     var jsonText = jsonInput.value.trim();
     if (!jsonText) {
       showError("Bitte JSON-Mapping eingeben.");
@@ -324,29 +702,27 @@ button {
     }
 
     if (typeof mapping !== "object" || Array.isArray(mapping) || mapping === null) {
-      showError("JSON muss ein Objekt sein (z.B. {\"keyword\": \"url\"}).");
+      showError("JSON muss ein Objekt sein, z.\u00a0B. {\"keyword\": \"url\"}.");
       return;
     }
 
     var keywords = Object.keys(mapping);
-    if (keywords.length === 0) {
-      showError("JSON-Mapping ist leer.");
-      return;
-    }
-
-    if (keywords.length > 500) {
-      showError("Zu viele Keywords (max. 500).");
-      return;
-    }
+    if (keywords.length === 0) { showError("JSON-Mapping ist leer."); return; }
+    if (keywords.length > 500) { showError("Zu viele Keywords (max. 500)."); return; }
 
     var maxLinks = parseInt(maxLinksInput.value, 10);
     if (isNaN(maxLinks) || maxLinks < 0) maxLinks = 1;
 
-    var result = processHTML(htmlContent, mapping, keywords, maxLinks);
+    var useWidgets = useWidgetsCb.checked && !useWidgetsCb.disabled && loadedWidgets.length > 0;
+
+    var result = processHTML(htmlContent, mapping, keywords, maxLinks, useWidgets ? loadedWidgets : []);
     resultHTML = result.html;
 
     // Stats
-    statsEl.innerHTML = "<strong>" + result.keywordsFound + "</strong> Keywords gefunden, <strong>" + result.linksCreated + "</strong> Links erstellt";
+    statKeywords.textContent = result.keywordsFound;
+    statLinks.textContent    = result.linksCreated;
+    statWidgets.textContent  = result.widgetsInserted;
+    statWidgetsW.style.display = useWidgets ? "" : "none";
 
     // Preview
     var blob = new Blob([resultHTML], { type: "text/html" });
@@ -356,203 +732,233 @@ button {
     outputSection.scrollIntoView({ behavior: "smooth" });
   });
 
-  function processHTML(html, mapping, keywords, maxLinks) {
-    // Sort keywords by length descending (longest first to handle overlaps)
-    var sorted = keywords.slice().sort(function(a, b) {
-      return b.length - a.length;
-    });
+  /* ── Core processing ──────────────────────────────────────────────── */
+  function processHTML(html, mapping, keywords, maxLinks, widgets) {
+    // Sort keywords longest-first to handle overlapping matches
+    var sorted = keywords.slice().sort(function (a, b) { return b.length - a.length; });
 
-    // Parse HTML using DOMParser
     var parser = new DOMParser();
     var doc = parser.parseFromString(html, "text/html");
 
-    // Track link counts per keyword
-    var linkCounts = {};
-    var totalLinks = 0;
+    var linkCounts     = {};
+    var totalLinks     = 0;
     var keywordsMatched = {};
 
-    for (var i = 0; i < sorted.length; i++) {
-      linkCounts[sorted[i].toLowerCase()] = 0;
-    }
+    sorted.forEach(function (kw) {
+      linkCounts[kw.toLowerCase()] = 0;
+    });
 
-    // Build regex for each keyword (whole word, case-insensitive)
-    var keywordData = sorted.map(function(kw) {
-      // Escape regex special chars
+    var keywordData = sorted.map(function (kw) {
       var escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      // Word boundary matching - use Unicode-aware boundaries
       var pattern = new RegExp("(?<![\\wäöüÄÖÜß])" + escaped + "(?![\\wäöüÄÖÜß])", "gi");
       return { keyword: kw, url: mapping[kw], regex: pattern, lcKey: kw.toLowerCase() };
     });
 
-    // Walk text nodes, skip exclusion zones
+    // Pass 1: keyword linking
     processNode(doc.body);
 
     function processNode(node) {
       if (!node) return;
-
-      // Skip exclusion zones
       if (node.nodeType === 1) {
         var tag = node.tagName.toLowerCase();
         if (tag === "a" || tag === "script" || tag === "style" ||
-            tag === "code" || tag === "pre" || tag === "textarea") {
-          return;
-        }
+            tag === "code" || tag === "pre" || tag === "textarea") return;
       }
-
-      // Process text nodes
-      if (node.nodeType === 3) {
-        processTextNode(node);
-        return;
-      }
-
-      // Recurse into child nodes (snapshot to avoid mutation issues)
-      var children = Array.prototype.slice.call(node.childNodes);
-      for (var i = 0; i < children.length; i++) {
-        processNode(children[i]);
-      }
+      if (node.nodeType === 3) { processTextNode(node); return; }
+      Array.prototype.slice.call(node.childNodes).forEach(processNode);
     }
 
     function processTextNode(textNode) {
       var text = textNode.nodeValue;
       if (!text || !text.trim()) return;
 
-      var fragments = [];
-      var consumed = new Array(text.length);
-      for (var c = 0; c < consumed.length; c++) consumed[c] = false;
-
-      // Collect all matches across all keywords
       var allMatches = [];
-
-      for (var k = 0; k < keywordData.length; k++) {
-        var kd = keywordData[k];
-
-        // Check if max links reached for this keyword
-        if (maxLinks > 0 && linkCounts[kd.lcKey] >= maxLinks) continue;
-
+      keywordData.forEach(function (kd) {
+        if (maxLinks > 0 && linkCounts[kd.lcKey] >= maxLinks) return;
         kd.regex.lastIndex = 0;
-        var match;
-        while ((match = kd.regex.exec(text)) !== null) {
-          allMatches.push({
-            start: match.index,
-            end: match.index + match[0].length,
-            matchText: match[0],
-            kd: kd
-          });
+        var m;
+        while ((m = kd.regex.exec(text)) !== null) {
+          allMatches.push({ start: m.index, end: m.index + m[0].length, matchText: m[0], kd: kd });
         }
-      }
-
-      // Sort matches by position, then by length descending (longer matches first)
-      allMatches.sort(function(a, b) {
-        if (a.start !== b.start) return a.start - b.start;
-        return (b.end - b.start) - (a.end - a.start);
       });
 
-      // Greedily select non-overlapping matches
-      var selectedMatches = [];
-      for (var m = 0; m < allMatches.length; m++) {
-        var am = allMatches[m];
+      // Sort by position then length descending
+      allMatches.sort(function (a, b) {
+        return a.start !== b.start ? a.start - b.start : (b.end - b.start) - (a.end - a.start);
+      });
 
-        // Check if max links reached for this keyword
-        if (maxLinks > 0 && linkCounts[am.kd.lcKey] >= maxLinks) continue;
-
-        // Check overlap with already selected
-        var overlaps = false;
-        for (var s = 0; s < selectedMatches.length; s++) {
-          if (am.start < selectedMatches[s].end && am.end > selectedMatches[s].start) {
-            overlaps = true;
-            break;
-          }
-        }
-        if (overlaps) continue;
-
-        selectedMatches.push(am);
+      var selected = [];
+      allMatches.forEach(function (am) {
+        if (maxLinks > 0 && linkCounts[am.kd.lcKey] >= maxLinks) return;
+        var overlaps = selected.some(function (s) { return am.start < s.end && am.end > s.start; });
+        if (overlaps) return;
+        selected.push(am);
         linkCounts[am.kd.lcKey]++;
         keywordsMatched[am.kd.lcKey] = true;
         totalLinks++;
-      }
+      });
 
-      if (selectedMatches.length === 0) return;
+      if (selected.length === 0) return;
 
-      // Sort selected by position
-      selectedMatches.sort(function(a, b) { return a.start - b.start; });
+      selected.sort(function (a, b) { return a.start - b.start; });
 
-      // Build replacement fragment
       var frag = document.createDocumentFragment();
-      var pos = 0;
-
-      for (var i = 0; i < selectedMatches.length; i++) {
-        var sm = selectedMatches[i];
-
-        // Text before match
-        if (sm.start > pos) {
-          frag.appendChild(document.createTextNode(text.substring(pos, sm.start)));
-        }
-
-        // Create link
+      var pos  = 0;
+      selected.forEach(function (sm) {
+        if (sm.start > pos) frag.appendChild(document.createTextNode(text.substring(pos, sm.start)));
         var a = document.createElement("a");
         a.href = sm.kd.url;
         a.textContent = sm.matchText;
         frag.appendChild(a);
-
         pos = sm.end;
-      }
-
-      // Remaining text
-      if (pos < text.length) {
-        frag.appendChild(document.createTextNode(text.substring(pos)));
-      }
-
+      });
+      if (pos < text.length) frag.appendChild(document.createTextNode(text.substring(pos)));
       textNode.parentNode.replaceChild(frag, textNode);
     }
 
-    // Serialize back to HTML string
-    // Reconstruct full document
-    var serializer = new XMLSerializer();
-    var outputHTML;
+    // Pass 2: inject widget boxes
+    var widgetsInserted = 0;
+    if (widgets && widgets.length > 0) {
+      injectWidgetStyles(doc);
+      widgetsInserted = injectWidgets(doc, widgets);
+    }
 
-    // Try to preserve original doctype and structure
-    // Get the serialized content from DOMParser result
+    // Serialize
     var doctype = doc.doctype;
-    var doctypeStr = "";
+    var doctypeStr = "<!DOCTYPE html>\n";
     if (doctype) {
       doctypeStr = "<!DOCTYPE " + doctype.name;
       if (doctype.publicId) doctypeStr += ' PUBLIC "' + doctype.publicId + '"';
       if (doctype.systemId) doctypeStr += ' "' + doctype.systemId + '"';
       doctypeStr += ">\n";
-    } else {
-      doctypeStr = "<!DOCTYPE html>\n";
     }
 
-    outputHTML = doctypeStr + doc.documentElement.outerHTML;
-
     return {
-      html: outputHTML,
+      html: doctypeStr + doc.documentElement.outerHTML,
       linksCreated: totalLinks,
-      keywordsFound: Object.keys(keywordsMatched).length
+      keywordsFound: Object.keys(keywordsMatched).length,
+      widgetsInserted: widgetsInserted
     };
   }
 
-  // -- Download --
-  btnDownload.addEventListener("click", function() {
+  /* ── Widget engine ────────────────────────────────────────────────── */
+  function injectWidgets(doc, widgets) {
+    var inserted    = 0;
+    var usedIds     = {};
+    var blockTags   = ["p", "li", "blockquote", "td", "th", "h2", "h3", "h4"];
+    var allBlocks   = [];
+
+    blockTags.forEach(function (tag) {
+      Array.prototype.push.apply(allBlocks, Array.prototype.slice.call(doc.body.querySelectorAll(tag)));
+    });
+
+    // Sort blocks by DOM order using a positional map
+    allBlocks.sort(function (a, b) {
+      var pos = a.compareDocumentPosition(b);
+      return (pos & 4) ? -1 : (pos & 2) ? 1 : 0;
+    });
+
+    allBlocks.forEach(function (block) {
+      if (!block.textContent.trim()) return;
+      var text = block.textContent.toLowerCase();
+
+      for (var w = 0; w < widgets.length; w++) {
+        var widget = widgets[w];
+        if (usedIds[widget.id]) continue;
+
+        var triggered = widget.triggerKeywords.some(function (kw) {
+          return text.indexOf(kw.toLowerCase()) !== -1;
+        });
+        if (!triggered) continue;
+
+        var widgetEl = buildWidgetEl(doc, widget);
+        block.parentNode.insertBefore(widgetEl, block.nextSibling);
+        usedIds[widget.id] = true;
+        inserted++;
+        break; // max one widget inserted per block
+      }
+    });
+
+    return inserted;
+  }
+
+  function buildWidgetEl(doc, widget) {
+    var outer = doc.createElement("div");
+    outer.className = "pvg-ratgeber-widget";
+    outer.setAttribute("data-widget-id", widget.id);
+
+    var iconEl = doc.createElement("div");
+    iconEl.className = "pvg-ratgeber-widget__icon";
+    iconEl.textContent = widget.icon || "\uD83D\uDCD6";
+
+    var contentEl = doc.createElement("div");
+    contentEl.className = "pvg-ratgeber-widget__content";
+
+    var titleEl = doc.createElement("strong");
+    titleEl.className = "pvg-ratgeber-widget__title";
+    titleEl.textContent = widget.title;
+
+    var descEl = doc.createElement("p");
+    descEl.className = "pvg-ratgeber-widget__desc";
+    descEl.textContent = widget.description;
+
+    var linkEl = doc.createElement("a");
+    linkEl.className = "pvg-ratgeber-widget__link";
+    linkEl.href = widget.linkUrl;
+    linkEl.textContent = widget.linkText + " \u2192";
+
+    contentEl.appendChild(titleEl);
+    contentEl.appendChild(descEl);
+    contentEl.appendChild(linkEl);
+    outer.appendChild(iconEl);
+    outer.appendChild(contentEl);
+
+    return outer;
+  }
+
+  function injectWidgetStyles(doc) {
+    if (doc.querySelector("style[data-pvg-widgets]")) return;
+    var style = doc.createElement("style");
+    style.setAttribute("data-pvg-widgets", "1");
+    style.textContent = [
+      ".pvg-ratgeber-widget{display:flex;align-items:flex-start;gap:12px;",
+        "background:#E8F4F8;border-left:4px solid #087E9F;",
+        "border-radius:0 8px 8px 0;padding:16px;margin:20px 0;font-family:inherit}",
+      ".pvg-ratgeber-widget__icon{font-size:1.4rem;flex-shrink:0;line-height:1;padding-top:2px}",
+      ".pvg-ratgeber-widget__content{flex:1}",
+      ".pvg-ratgeber-widget__title{display:block;color:#003043;font-size:0.9rem;font-weight:700;margin-bottom:4px}",
+      ".pvg-ratgeber-widget__desc{color:#3D5560;font-size:0.85rem;margin:0 0 8px;line-height:1.5}",
+      ".pvg-ratgeber-widget__link{color:#087E9F;font-size:0.85rem;font-weight:600;text-decoration:none}",
+      ".pvg-ratgeber-widget__link:hover{color:#429BB3;text-decoration:underline}"
+    ].join("");
+    var head = doc.head || doc.querySelector("head") || doc.documentElement;
+    head.appendChild(style);
+  }
+
+  /* ── Download ─────────────────────────────────────────────────────── */
+  btnDownload.addEventListener("click", function () {
     if (!resultHTML) return;
     var blob = new Blob([resultHTML], { type: "text/html;charset=utf-8" });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement("a");
-    a.href = url;
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement("a");
+    a.href     = url;
     a.download = fileName;
     a.click();
     URL.revokeObjectURL(url);
   });
 
-  // -- Copy --
-  btnCopy.addEventListener("click", function() {
+  /* ── Copy ─────────────────────────────────────────────────────────── */
+  btnCopy.addEventListener("click", function () {
     if (!resultHTML) return;
-    navigator.clipboard.writeText(resultHTML).then(function() {
+    navigator.clipboard.writeText(resultHTML).then(function () {
       var orig = btnCopy.textContent;
-      btnCopy.textContent = "Kopiert!";
-      setTimeout(function() { btnCopy.textContent = orig; }, 1500);
+      btnCopy.textContent = "✓ Kopiert!";
+      setTimeout(function () { btnCopy.textContent = orig; }, 1800);
     });
   });
+
+  // Init widget hint
+  updateWidgetHint();
 
 })();
 </script>

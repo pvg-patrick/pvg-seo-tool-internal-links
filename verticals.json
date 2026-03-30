@@ -1,0 +1,8 @@
+[
+  {
+    "id": "kredit",
+    "label": "Kredit & Baufinanzierung",
+    "keywordsFile": "keyword-mapping-kredit-sample.json",
+    "widgetsFile": "widgets-kredit.json"
+  }
+]
