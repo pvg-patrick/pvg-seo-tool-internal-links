@@ -1,16 +1,12 @@
 {
   "Tagesgeld": "https://konto.preisvergleich.de/tagesgeld/",
   "Kreditkarte": "https://konto.preisvergleich.de/kreditkarte/",
-
-  "Festgeld": "https://konto.preisvergleich.de/festgeld/"
-  "Kreditkosten": "https://kredit.preisvergleich.de/ratgeber/kredit-kosten/"
-  "Kreditkosten": "https://kredit.preisvergleich.de/ratgeber/kredit-kosten/"
-  "Autokredit": "",
-}
-
-
-
-{
+  "Festgeld": "https://konto.preisvergleich.de/festgeld/",
+  "Kreditkosten": "https://kredit.preisvergleich.de/ratgeber/kredit-kosten/",
+  "Autokredit": "https://kredit.preisvergleich.de/autokredit/",
   "Eigenkapital": "https://kredit.preisvergleich.de/baufinanzierung/lexikon/eigenkapital/",
   "Notar": "https://kredit.preisvergleich.de/baufinanzierung/lexikon/notar/",
+  "Baufinanzierung": "https://kredit.preisvergleich.de/baufinanzierung/",
+  "Bonität": "https://kredit.preisvergleich.de/ratgeber/kredit-trotz-schufa/",
+  "SCHUFA": "https://kredit.preisvergleich.de/ratgeber/kredit-trotz-schufa/"
 }

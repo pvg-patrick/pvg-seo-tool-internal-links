@@ -1,0 +1,47 @@
+[
+  {
+    "id": "ratgeber-kreditkosten",
+    "triggerKeywords": ["Kreditkosten", "Zinsen", "Zinssatz", "effektiver Jahreszins", "Sollzins"],
+    "icon": "💡",
+    "title": "Was kostet ein Kredit wirklich?",
+    "description": "Zinsen, Gebühren, Restschuldversicherung – wir erklären alle Kostenfaktoren verständlich und zeigen, worauf Sie beim Vergleich achten sollten.",
+    "linkText": "Zum Ratgeber Kreditkosten",
+    "linkUrl": "https://kredit.preisvergleich.de/ratgeber/kredit-kosten/"
+  },
+  {
+    "id": "ratgeber-eigenkapital",
+    "triggerKeywords": ["Eigenkapital", "Eigenmittel", "Eigenanteil", "Ersparnisse"],
+    "icon": "🏠",
+    "title": "Eigenkapital bei der Baufinanzierung",
+    "description": "Wie viel Eigenkapital brauchen Sie für ein Haus? Wir zeigen, welche Quellen anerkannt werden und wie Sie den optimalen Eigenkapitalanteil berechnen.",
+    "linkText": "Zum Ratgeber Eigenkapital",
+    "linkUrl": "https://kredit.preisvergleich.de/baufinanzierung/lexikon/eigenkapital/"
+  },
+  {
+    "id": "ratgeber-autokredit",
+    "triggerKeywords": ["Autokredit", "Autofinanzierung", "Fahrzeugfinanzierung", "KFZ-Kredit", "Autokauf"],
+    "icon": "🚗",
+    "title": "Autokredit clever finanzieren",
+    "description": "Ballonfinanzierung, Drei-Wege-Finanzierung oder klassischer Ratenkredit – so finden Sie die günstigste Lösung für Ihren Fahrzeugkauf.",
+    "linkText": "Zum Autokredit-Vergleich",
+    "linkUrl": "https://kredit.preisvergleich.de/autokredit/"
+  },
+  {
+    "id": "ratgeber-bonitaet",
+    "triggerKeywords": ["Bonität", "Kreditwürdigkeit", "SCHUFA", "Bonitätsprüfung", "Kreditrating"],
+    "icon": "📊",
+    "title": "Bonität verbessern – so geht's",
+    "description": "Eine gute Bonität sichert günstige Kreditkonditionen. Erfahren Sie, wie Ihre Kreditwürdigkeit berechnet wird und wie Sie sie gezielt verbessern können.",
+    "linkText": "Ratgeber Bonität & SCHUFA",
+    "linkUrl": "https://kredit.preisvergleich.de/ratgeber/kredit-trotz-schufa/"
+  },
+  {
+    "id": "ratgeber-baufinanzierung",
+    "triggerKeywords": ["Baufinanzierung", "Hypothek", "Immobilienkredit", "Hypothekenkredit", "Immobiliendarlehen"],
+    "icon": "🔑",
+    "title": "Baufinanzierung im Überblick",
+    "description": "Zinsbindung, Tilgungsrate, Sondertilgung – alle wichtigen Begriffe der Baufinanzierung einfach erklärt. Jetzt Angebote vergleichen und sparen.",
+    "linkText": "Zum Baufinanzierungs-Ratgeber",
+    "linkUrl": "https://kredit.preisvergleich.de/baufinanzierung/"
+  }
+]
