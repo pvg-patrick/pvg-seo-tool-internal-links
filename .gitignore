@@ -1,6 +1,4 @@
-node_modules/
 .env
-.vercel/
 
 # Lokale Rohdaten und generierte Ausgaben
 data/
