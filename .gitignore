@@ -1,3 +1,9 @@
 node_modules/
 .env
 .vercel/
+
+# Lokale Rohdaten und generierte Ausgaben
+data/
+output/
+linking_history.json
+linking_baseline.json
