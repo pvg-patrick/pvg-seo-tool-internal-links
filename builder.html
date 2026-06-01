@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Internal Links Tool – PREISVERGLEICH.de</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── Design Tokens (PVG Styleguide Feb 2026) ─────────────────────────── */
+:root {
+  --color-primary-dark:  #003043;
+  --color-primary:       #087E9F;
+  --color-primary-light: #429BB3;
+  --color-primary-bg:    #E8F4F8;
+  --color-secondary:     #C62000;
+
+  --color-gray-50:  #F8FAFB;
+  --color-gray-100: #F0F4F6;
+  --color-gray-200: #E1E8EC;
+  --color-gray-300: #C4D0D6;
+  --color-gray-500: #7A9099;
+  --color-gray-700: #3D5560;
+  --color-gray-900: #1A2D35;
+
+  --color-error-bg:     #FFF0EE;
+  --color-error-border: #F8C4BB;
+  --color-error-text:   #9C1A00;
+  --color-success-bg:   #E8F4F8;
+  --color-success-text: #003043;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-card:       0 2px 8px rgba(0, 48, 67, 0.10);
+  --shadow-card-hover: 0 4px 16px rgba(0, 48, 67, 0.15);
+  --transition: 0.2s ease;
+
+  --font: 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+/* ── Reset ───────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Base ────────────────────────────────────────────────────────────── */
+body {
+  font-family: var(--font);
+  background: var(--color-gray-100);
+  color: var(--color-gray-900);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────── */
+.site-header {
+  background: var(--color-primary-dark);
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.site-header__brand {
+  color: var(--color-primary-light);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.site-header__divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(255,255,255,0.2);
+}
+
+.site-header__title {
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.site-header__badge {
+  margin-left: auto;
+  background: rgba(8,126,159,0.35);
+  color: var(--color-primary-light);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+
+/* ── Layout ──────────────────────────────────────────────────────────── */
+.main {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+/* ── Card ────────────────────────────────────────────────────────────── */
+.card {
+  background: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+.card__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.card__step {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-gray-900);
+}
+
+/* ── Form elements ───────────────────────────────────────────────────── */
+label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-gray-700);
+  margin-bottom: 6px;
+}
+
+select,
+input[type="number"] {
+  font-family: var(--font);
+  font-size: 0.875rem;
+  color: var(--color-gray-900);
+  background: #fff;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+}
+
+select {
+  width: 100%;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237A9099' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+select:focus,
+input[type="number"]:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(8, 126, 159, 0.15);
+}
+
+input[type="number"] {
+  width: 80px;
+}
+
+textarea {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  width: 100%;
+  min-height: 148px;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  resize: vertical;
+  color: var(--color-gray-900);
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  line-height: 1.5;
+}
+
+textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(8, 126, 159, 0.15);
+}
+
+/* ── Drop zone ───────────────────────────────────────────────────────── */
+.drop-zone {
+  border: 2px dashed var(--color-gray-300);
+  border-radius: var(--radius-md);
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--color-gray-500);
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: border-color var(--transition), background var(--transition), color var(--transition);
+  user-select: none;
+}
+
+.drop-zone strong { color: var(--color-primary); }
+
+.drop-zone:hover,
+.drop-zone.dragover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-bg);
+  color: var(--color-primary-dark);
+}
+
+.drop-zone.has-file {
+  border-color: var(--color-primary);
+  border-style: solid;
+  background: var(--color-primary-bg);
+  color: var(--color-primary-dark);
+  font-weight: 500;
+}
+
+/* ── Settings row ────────────────────────────────────────────────────── */
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.settings-row label {
+  margin-bottom: 0;
+}
+
+.hint {
+  font-size: 0.75rem;
+  color: var(--color-gray-500);
+}
+
+/* ── Checkbox ────────────────────────────────────────────────────────── */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-gray-700);
+  cursor: pointer;
+  margin-bottom: 0;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition);
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-primary-light);
+  box-shadow: 0 2px 8px rgba(8, 126, 159, 0.30);
+}
+.btn-primary:disabled {
+  background: var(--color-gray-300);
+  color: var(--color-gray-500);
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: #fff;
+  color: var(--color-primary-dark);
+  border: 1px solid var(--color-gray-200);
+}
+.btn-secondary:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.action-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ── Notice / Error ──────────────────────────────────────────────────── */
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.notice--info {
+  background: var(--color-primary-bg);
+  color: var(--color-primary-dark);
+  border: 1px solid rgba(8,126,159,0.2);
+}
+
+.notice--error {
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+  border: 1px solid var(--color-error-border);
+}
+
+.notice--warning {
+  background: #FFF8E6;
+  color: #7A4F00;
+  border: 1px solid #F5D98A;
+}
+
+.notice { display: none; }
+.notice.visible { display: flex; }
+
+/* ── Divider ─────────────────────────────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: var(--color-gray-100);
+  margin: 16px 0;
+}
+
+/* ── Stats bar ───────────────────────────────────────────────────────── */
+.stats-bar {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  background: var(--color-gray-50);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-gray-200);
+  margin-bottom: 16px;
+}
+
+.stats-bar__item {
+  font-size: 0.8rem;
+  color: var(--color-gray-500);
+}
+
+.stats-bar__item strong {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-right: 4px;
+}
+
+/* ── Preview frame ───────────────────────────────────────────────────── */
+.preview-frame {
+  width: 100%;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-sm);
+  min-height: 320px;
+  background: #fff;
+}
+
+/* ── Server hint ─────────────────────────────────────────────────────── */
+.server-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #FFF8E6;
+  border: 1px solid #F5D98A;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 0.78rem;
+  color: #7A4F00;
+  line-height: 1.5;
+  margin-top: 8px;
+}
+
+.server-hint code {
+  background: rgba(0,0,0,0.08);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+}
+
+/* ── Tool nav ────────────────────────────────────────────────────────── */
+.tool-nav { display: flex; align-items: center; gap: 3px; margin-left: 12px; }
+.tool-nav__link {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.03em;
+  transition: background 0.15s, color 0.15s;
+}
+.tool-nav__link--active   { background: rgba(8,126,159,0.45); color: #fff; }
+.tool-nav__link--inactive { color: rgba(255,255,255,0.55); }
+.tool-nav__link--inactive:hover { background: rgba(8,126,159,0.2); color: rgba(255,255,255,0.85); }
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .main { padding: 16px 12px 48px; }
+  .card { padding: 16px; }
+  .drop-zone { padding: 24px 12px; }
+  textarea { min-height: 110px; }
+  .site-header__badge { display: none; }
+  .tool-nav { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────────────────── -->
+<header class="site-header">
+  <span class="site-header__brand">PREISVERGLEICH.de</span>
+  <div class="site-header__divider"></div>
+  <span class="site-header__title">SEO Internal Links Tool</span>
+  <span class="site-header__badge">Internes Tool</span>
+  <nav class="tool-nav">
+    <a href="index.html" class="tool-nav__link tool-nav__link--inactive">Dashboard</a>
+    <a href="builder.html" class="tool-nav__link tool-nav__link--active">Builder</a>
+    <a href="analyse.html" class="tool-nav__link tool-nav__link--inactive">Analyse</a>
+  </nav>
+</header>
+
+<!-- ── Main ────────────────────────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- Step 1: Vertical -->
+  <div class="card">
+    <div class="card__header">
+      <div class="card__step">1</div>
+      <span class="card__title">Vertical / Thema wählen</span>
+    </div>
+    <label for="vertical-select">Themenbereich</label>
+    <select id="vertical-select">
+      <option value="">– Manuell eingeben –</option>
+    </select>
+    <div class="server-hint" id="server-hint" style="display:none">
+      ⚠️ Verticals konnten nicht geladen werden. Stelle sicher, dass die Dateien <code>verticals.json</code> im selben Verzeichnis liegen und die Seite über einen lokalen Server geöffnet wird.
+    </div>
+  </div>
+
+  <!-- Step 2: HTML Upload -->
+  <div class="card">
+    <div class="card__header">
+      <div class="card__step">2</div>
+      <span class="card__title">HTML-Datei</span>
+    </div>
+    <div class="drop-zone" id="drop-zone">
+      HTML-Datei hierher ziehen oder <strong>klicken</strong> zum Auswählen
+    </div>
+    <input type="file" id="file-input" accept=".html,.htm" hidden>
+  </div>
+
+  <!-- Step 3: Keyword Mapping -->
+  <div class="card">
+    <div class="card__header">
+      <div class="card__step">3</div>
+      <span class="card__title">Keyword-Mapping (JSON)</span>
+    </div>
+    <label for="json-input">Keywords → URLs</label>
+    <textarea id="json-input" placeholder='{"Kreditkarte": "https://konto.preisvergleich.de/kreditkarte/", "Baufinanzierung": "https://kredit.preisvergleich.de/baufinanzierung/"}'></textarea>
+    <p class="hint" style="margin-top:6px">Format: <code style="font-family:var(--font-mono);font-size:0.75rem">{"keyword": "https://…"}</code> – wird beim Vertical-Wechsel automatisch befüllt, kann manuell überschrieben werden.</p>
+  </div>
+
+  <!-- Step 4: Settings + Run -->
+  <div class="card">
+    <div class="card__header">
+      <div class="card__step">4</div>
+      <span class="card__title">Einstellungen &amp; Ausführen</span>
+    </div>
+
+    <div class="settings-row" style="margin-bottom:16px">
+      <label for="max-links" style="margin-bottom:0">Max. Links pro Keyword:</label>
+      <input type="number" id="max-links" value="1" min="0">
+      <span class="hint">0 = unbegrenzt</span>
+    </div>
+
+    <div class="settings-row" style="margin-bottom:16px">
+      <label class="checkbox-label">
+        <input type="checkbox" id="use-widgets" checked>
+        Ratgeber-Boxen einfügen
+      </label>
+      <span class="hint" id="widget-hint">– kein Vertical gewählt –</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <div id="error-msg" class="notice notice--error"></div>
+
+    <div class="action-row">
+      <button class="btn btn-primary" id="btn-convert" disabled>HTML verlinken</button>
+    </div>
+  </div>
+
+  <!-- Step 5: Result -->
+  <div class="card" id="output-section" style="display:none">
+    <div class="card__header">
+      <div class="card__step">5</div>
+      <span class="card__title">Ergebnis</span>
+    </div>
+
+    <div class="stats-bar" id="stats-bar">
+      <div class="stats-bar__item"><strong id="stat-keywords">0</strong> Keywords verlinkt</div>
+      <div class="stats-bar__item"><strong id="stat-links">0</strong> Links erstellt</div>
+      <div class="stats-bar__item" id="stat-widgets-wrap"><strong id="stat-widgets">0</strong> Ratgeber-Boxen eingefügt</div>
+    </div>
+
+    <div class="action-row" style="margin-bottom:16px">
+      <button class="btn btn-secondary" id="btn-download">↓ HTML herunterladen</button>
+      <button class="btn btn-secondary" id="btn-copy">Kopieren</button>
+    </div>
+
+    <iframe class="preview-frame" id="preview-frame" sandbox="allow-same-origin"></iframe>
+  </div>
+
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ── DOM refs ─────────────────────────────────────────────────────── */
+  var verticalSelect = document.getElementById("vertical-select");
+  var serverHint     = document.getElementById("server-hint");
+  var dropZone       = document.getElementById("drop-zone");
+  var fileInput      = document.getElementById("file-input");
+  var jsonInput      = document.getElementById("json-input");
+  var maxLinksInput  = document.getElementById("max-links");
+  var useWidgetsCb   = document.getElementById("use-widgets");
+  var widgetHint     = document.getElementById("widget-hint");
+  var btnConvert     = document.getElementById("btn-convert");
+  var btnDownload    = document.getElementById("btn-download");
+  var btnCopy        = document.getElementById("btn-copy");
+  var outputSection  = document.getElementById("output-section");
+  var statKeywords   = document.getElementById("stat-keywords");
+  var statLinks      = document.getElementById("stat-links");
+  var statWidgets    = document.getElementById("stat-widgets");
+  var statWidgetsW   = document.getElementById("stat-widgets-wrap");
+  var previewFrame   = document.getElementById("preview-frame");
+  var errorMsg       = document.getElementById("error-msg");
+
+  var htmlContent = "";
+  var resultHTML  = "";
+  var fileName    = "output.html";
+  var loadedWidgets = [];
+
+  /* ── Vertical loader ──────────────────────────────────────────────── */
+  fetch("verticals.json")
+    .then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    })
+    .then(function (verticals) {
+      verticals.forEach(function (v) {
+        var opt = document.createElement("option");
+        opt.value = v.id;
+        opt.textContent = v.label;
+        opt.dataset.keywordsFile = v.keywordsFile;
+        opt.dataset.widgetsFile  = v.widgetsFile || "";
+        verticalSelect.appendChild(opt);
+      });
+    })
+    .catch(function () {
+      serverHint.style.display = "flex";
+    });
+
+  verticalSelect.addEventListener("change", function () {
+    var opt = verticalSelect.options[verticalSelect.selectedIndex];
+    var kwFile = opt.dataset.keywordsFile;
+    var wFile  = opt.dataset.widgetsFile;
+
+    if (!kwFile) {
+      // Manual mode selected
+      loadedWidgets = [];
+      updateWidgetHint();
+      return;
+    }
+
+    // Load keywords
+    fetch(kwFile)
+      .then(function (r) { return r.json(); })
+      .then(function (kw) {
+        jsonInput.value = JSON.stringify(kw, null, 2);
+      })
+      .catch(function () {
+        showError("Keywords-Datei konnte nicht geladen werden: " + kwFile);
+      });
+
+    // Load widgets (optional)
+    loadedWidgets = [];
+    if (wFile) {
+      fetch(wFile)
+        .then(function (r) { return r.json(); })
+        .then(function (widgets) {
+          loadedWidgets = widgets;
+          updateWidgetHint();
+        })
+        .catch(function () {
+          loadedWidgets = [];
+          updateWidgetHint();
+        });
+    } else {
+      updateWidgetHint();
+    }
+  });
+
+  function updateWidgetHint() {
+    if (loadedWidgets.length === 0) {
+      widgetHint.textContent = "– kein Vertical gewählt –";
+      useWidgetsCb.disabled = true;
+    } else {
+      widgetHint.textContent = loadedWidgets.length + " Widget" + (loadedWidgets.length !== 1 ? "s" : "") + " geladen";
+      useWidgetsCb.disabled = false;
+    }
+  }
+
+  /* ── Drop zone ────────────────────────────────────────────────────── */
+  dropZone.addEventListener("click", function () { fileInput.click(); });
+
+  dropZone.addEventListener("dragover", function (e) {
+    e.preventDefault();
+    dropZone.classList.add("dragover");
+  });
+
+  dropZone.addEventListener("dragleave", function () {
+    dropZone.classList.remove("dragover");
+  });
+
+  dropZone.addEventListener("drop", function (e) {
+    e.preventDefault();
+    dropZone.classList.remove("dragover");
+    if (e.dataTransfer.files.length > 0) loadFile(e.dataTransfer.files[0]);
+  });
+
+  fileInput.addEventListener("change", function () {
+    if (fileInput.files.length > 0) loadFile(fileInput.files[0]);
+  });
+
+  function loadFile(file) {
+    if (!file.name.match(/\.html?$/i)) {
+      showError("Bitte eine HTML-Datei auswählen.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showError("Datei zu groß (max. 5 MB).");
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      htmlContent = e.target.result;
+      fileName = file.name.replace(/\.html?$/i, "") + "_linked.html";
+      dropZone.textContent = "✓  " + file.name + " (" + formatSize(file.size) + ")";
+      dropZone.classList.add("has-file");
+      btnConvert.disabled = false;
+      hideError();
+    };
+    reader.readAsText(file);
+  }
+
+  function formatSize(bytes) {
+    if (bytes < 1024) return bytes + " B";
+    return (bytes / 1024).toFixed(1) + " KB";
+  }
+
+  /* ── Error / notice helpers ───────────────────────────────────────── */
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.classList.add("visible");
+  }
+
+  function hideError() {
+    errorMsg.classList.remove("visible");
+  }
+
+  /* ── Convert ──────────────────────────────────────────────────────── */
+  btnConvert.addEventListener("click", function () {
+    hideError();
+
+    var jsonText = jsonInput.value.trim();
+    if (!jsonText) {
+      showError("Bitte JSON-Mapping eingeben.");
+      return;
+    }
+
+    var mapping;
+    try {
+      mapping = JSON.parse(jsonText);
+    } catch (e) {
+      showError("Ungültiges JSON: " + e.message);
+      return;
+    }
+
+    if (typeof mapping !== "object" || Array.isArray(mapping) || mapping === null) {
+      showError("JSON muss ein Objekt sein, z.\u00a0B. {\"keyword\": \"url\"}.");
+      return;
+    }
+
+    var keywords = Object.keys(mapping);
+    if (keywords.length === 0) { showError("JSON-Mapping ist leer."); return; }
+    if (keywords.length > 500) { showError("Zu viele Keywords (max. 500)."); return; }
+
+    var maxLinks = parseInt(maxLinksInput.value, 10);
+    if (isNaN(maxLinks) || maxLinks < 0) maxLinks = 1;
+
+    var useWidgets = useWidgetsCb.checked && !useWidgetsCb.disabled && loadedWidgets.length > 0;
+
+    var result = processHTML(htmlContent, mapping, keywords, maxLinks, useWidgets ? loadedWidgets : []);
+    resultHTML = result.html;
+
+    // Stats
+    statKeywords.textContent = result.keywordsFound;
+    statLinks.textContent    = result.linksCreated;
+    statWidgets.textContent  = result.widgetsInserted;
+    statWidgetsW.style.display = useWidgets ? "" : "none";
+
+    // Preview
+    var blob = new Blob([resultHTML], { type: "text/html" });
+    previewFrame.src = URL.createObjectURL(blob);
+
+    outputSection.style.display = "block";
+    outputSection.scrollIntoView({ behavior: "smooth" });
+  });
+
+  /* ── Core processing ──────────────────────────────────────────────── */
+  function processHTML(html, mapping, keywords, maxLinks, widgets) {
+    // Sort keywords longest-first to handle overlapping matches
+    var sorted = keywords.slice().sort(function (a, b) { return b.length - a.length; });
+
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(html, "text/html");
+
+    var linkCounts     = {};
+    var totalLinks     = 0;
+    var keywordsMatched = {};
+
+    sorted.forEach(function (kw) {
+      linkCounts[kw.toLowerCase()] = 0;
+    });
+
+    var keywordData = sorted.map(function (kw) {
+      var escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      var pattern = new RegExp("(?<![\\wäöüÄÖÜß])" + escaped + "(?![\\wäöüÄÖÜß])", "gi");
+      return { keyword: kw, url: mapping[kw], regex: pattern, lcKey: kw.toLowerCase() };
+    });
+
+    // Pass 1: keyword linking
+    processNode(doc.body);
+
+    function processNode(node) {
+      if (!node) return;
+      if (node.nodeType === 1) {
+        var tag = node.tagName.toLowerCase();
+        if (tag === "a" || tag === "script" || tag === "style" ||
+            tag === "code" || tag === "pre" || tag === "textarea") return;
+      }
+      if (node.nodeType === 3) { processTextNode(node); return; }
+      Array.prototype.slice.call(node.childNodes).forEach(processNode);
+    }
+
+    // Patterns that must never be linked: shortcodes, template vars, JSON-like structures
+    var PROTECTED_PATTERNS = [
+      /\[[a-zA-Z_][\w\-]*(?:[^\[\]]{0,300})?\]/g,  // [shortcode attr="..."] / [/shortcode]
+      /\{\{[^}]{0,300}\}\}/g,                        // {{template_var}}
+      /\{%[^%]{0,200}%\}/g,                          // {%twig/jinja%}
+      /\{(?:"[^"]{0,100}"|'[^']{0,100}')\s*:/g,     // {"key": ... JSON object start
+    ];
+
+    function getProtectedRanges(text) {
+      var ranges = [];
+      PROTECTED_PATTERNS.forEach(function (pat) {
+        pat.lastIndex = 0;
+        var m;
+        while ((m = pat.exec(text)) !== null) {
+          // Extend range to end of line for JSON-start matches (covers rest of structure)
+          var end = m.index + m[0].length;
+          if (pat === PROTECTED_PATTERNS[3]) {
+            // JSON object start: protect until matching closing brace or end of text
+            var depth = 0;
+            for (var i = m.index; i < text.length; i++) {
+              if (text[i] === "{") depth++;
+              else if (text[i] === "}") { depth--; if (depth <= 0) { end = i + 1; break; } }
+            }
+          }
+          ranges.push({ start: m.index, end: end });
+        }
+      });
+      return ranges;
+    }
+
+    function isProtected(start, end, ranges) {
+      return ranges.some(function (r) { return start < r.end && end > r.start; });
+    }
+
+    function processTextNode(textNode) {
+      var text = textNode.nodeValue;
+      if (!text || !text.trim()) return;
+
+      var protectedRanges = getProtectedRanges(text);
+
+      var allMatches = [];
+      keywordData.forEach(function (kd) {
+        if (maxLinks > 0 && linkCounts[kd.lcKey] >= maxLinks) return;
+        kd.regex.lastIndex = 0;
+        var m;
+        while ((m = kd.regex.exec(text)) !== null) {
+          var mStart = m.index, mEnd = m.index + m[0].length;
+          if (isProtected(mStart, mEnd, protectedRanges)) continue;
+          allMatches.push({ start: mStart, end: mEnd, matchText: m[0], kd: kd });
+        }
+      });
+
+      // Sort by position then length descending
+      allMatches.sort(function (a, b) {
+        return a.start !== b.start ? a.start - b.start : (b.end - b.start) - (a.end - a.start);
+      });
+
+      var selected = [];
+      allMatches.forEach(function (am) {
+        if (maxLinks > 0 && linkCounts[am.kd.lcKey] >= maxLinks) return;
+        var overlaps = selected.some(function (s) { return am.start < s.end && am.end > s.start; });
+        if (overlaps) return;
+        selected.push(am);
+        linkCounts[am.kd.lcKey]++;
+        keywordsMatched[am.kd.lcKey] = true;
+        totalLinks++;
+      });
+
+      if (selected.length === 0) return;
+
+      selected.sort(function (a, b) { return a.start - b.start; });
+
+      var frag = document.createDocumentFragment();
+      var pos  = 0;
+      selected.forEach(function (sm) {
+        if (sm.start > pos) frag.appendChild(document.createTextNode(text.substring(pos, sm.start)));
+        var a = document.createElement("a");
+        a.href = sm.kd.url;
+        a.textContent = sm.matchText;
+        frag.appendChild(a);
+        pos = sm.end;
+      });
+      if (pos < text.length) frag.appendChild(document.createTextNode(text.substring(pos)));
+      textNode.parentNode.replaceChild(frag, textNode);
+    }
+
+    // Pass 2: inject widget boxes
+    var widgetsInserted = 0;
+    if (widgets && widgets.length > 0) {
+      injectWidgetStyles(doc);
+      widgetsInserted = injectWidgets(doc, widgets);
+    }
+
+    // Serialize
+    var doctype = doc.doctype;
+    var doctypeStr = "<!DOCTYPE html>\n";
+    if (doctype) {
+      doctypeStr = "<!DOCTYPE " + doctype.name;
+      if (doctype.publicId) doctypeStr += ' PUBLIC "' + doctype.publicId + '"';
+      if (doctype.systemId) doctypeStr += ' "' + doctype.systemId + '"';
+      doctypeStr += ">\n";
+    }
+
+    return {
+      html: doctypeStr + doc.documentElement.outerHTML,
+      linksCreated: totalLinks,
+      keywordsFound: Object.keys(keywordsMatched).length,
+      widgetsInserted: widgetsInserted
+    };
+  }
+
+  /* ── Widget engine ────────────────────────────────────────────────── */
+  function injectWidgets(doc, widgets) {
+    var inserted    = 0;
+    var usedIds     = {};
+    var blockTags   = ["p", "li", "blockquote", "td", "th", "h2", "h3", "h4"];
+    var allBlocks   = [];
+
+    blockTags.forEach(function (tag) {
+      Array.prototype.push.apply(allBlocks, Array.prototype.slice.call(doc.body.querySelectorAll(tag)));
+    });
+
+    // Sort blocks by DOM order using a positional map
+    allBlocks.sort(function (a, b) {
+      var pos = a.compareDocumentPosition(b);
+      return (pos & 4) ? -1 : (pos & 2) ? 1 : 0;
+    });
+
+    allBlocks.forEach(function (block) {
+      if (!block.textContent.trim()) return;
+      var text = block.textContent.toLowerCase();
+
+      for (var w = 0; w < widgets.length; w++) {
+        var widget = widgets[w];
+        if (usedIds[widget.id]) continue;
+
+        var triggered = widget.triggerKeywords.some(function (kw) {
+          return text.indexOf(kw.toLowerCase()) !== -1;
+        });
+        if (!triggered) continue;
+
+        var widgetEl = buildWidgetEl(doc, widget);
+        block.parentNode.insertBefore(widgetEl, block.nextSibling);
+        usedIds[widget.id] = true;
+        inserted++;
+        break; // max one widget inserted per block
+      }
+    });
+
+    return inserted;
+  }
+
+  function buildWidgetEl(doc, widget) {
+    var outer = doc.createElement("div");
+    outer.className = "pvg-ratgeber-widget";
+    outer.setAttribute("data-widget-id", widget.id);
+
+    var iconEl = doc.createElement("div");
+    iconEl.className = "pvg-ratgeber-widget__icon";
+    iconEl.textContent = widget.icon || "\uD83D\uDCD6";
+
+    var contentEl = doc.createElement("div");
+    contentEl.className = "pvg-ratgeber-widget__content";
+
+    var titleEl = doc.createElement("strong");
+    titleEl.className = "pvg-ratgeber-widget__title";
+    titleEl.textContent = widget.title;
+
+    var descEl = doc.createElement("p");
+    descEl.className = "pvg-ratgeber-widget__desc";
+    descEl.textContent = widget.description;
+
+    var linkEl = doc.createElement("a");
+    linkEl.className = "pvg-ratgeber-widget__link";
+    linkEl.href = widget.linkUrl;
+    linkEl.textContent = widget.linkText + " \u2192";
+
+    contentEl.appendChild(titleEl);
+    contentEl.appendChild(descEl);
+    contentEl.appendChild(linkEl);
+    outer.appendChild(iconEl);
+    outer.appendChild(contentEl);
+
+    return outer;
+  }
+
+  function injectWidgetStyles(doc) {
+    if (doc.querySelector("style[data-pvg-widgets]")) return;
+    var style = doc.createElement("style");
+    style.setAttribute("data-pvg-widgets", "1");
+    style.textContent = [
+      ".pvg-ratgeber-widget{display:flex;align-items:flex-start;gap:12px;",
+        "background:#E8F4F8;border-left:4px solid #087E9F;",
+        "border-radius:0 8px 8px 0;padding:16px;margin:20px 0;font-family:inherit}",
+      ".pvg-ratgeber-widget__icon{font-size:1.4rem;flex-shrink:0;line-height:1;padding-top:2px}",
+      ".pvg-ratgeber-widget__content{flex:1}",
+      ".pvg-ratgeber-widget__title{display:block;color:#003043;font-size:0.9rem;font-weight:700;margin-bottom:4px}",
+      ".pvg-ratgeber-widget__desc{color:#3D5560;font-size:0.85rem;margin:0 0 8px;line-height:1.5}",
+      ".pvg-ratgeber-widget__link{color:#087E9F;font-size:0.85rem;font-weight:600;text-decoration:none}",
+      ".pvg-ratgeber-widget__link:hover{color:#429BB3;text-decoration:underline}"
+    ].join("");
+    var head = doc.head || doc.querySelector("head") || doc.documentElement;
+    head.appendChild(style);
+  }
+
+  /* ── Download ─────────────────────────────────────────────────────── */
+  btnDownload.addEventListener("click", function () {
+    if (!resultHTML) return;
+    var blob = new Blob([resultHTML], { type: "text/html;charset=utf-8" });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement("a");
+    a.href     = url;
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  /* ── Copy ─────────────────────────────────────────────────────────── */
+  btnCopy.addEventListener("click", function () {
+    if (!resultHTML) return;
+    navigator.clipboard.writeText(resultHTML).then(function () {
+      var orig = btnCopy.textContent;
+      btnCopy.textContent = "✓ Kopiert!";
+      setTimeout(function () { btnCopy.textContent = orig; }, 1800);
+    });
+  });
+
+  // Init widget hint
+  updateWidgetHint();
+
+})();
+</script>
+</body>
+</html>
