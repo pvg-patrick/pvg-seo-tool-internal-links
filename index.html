@@ -410,6 +410,21 @@ textarea:focus {
   font-family: var(--font-mono);
 }
 
+/* ── Tool nav ────────────────────────────────────────────────────────── */
+.tool-nav { display: flex; align-items: center; gap: 3px; margin-left: 12px; }
+.tool-nav__link {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.03em;
+  transition: background 0.15s, color 0.15s;
+}
+.tool-nav__link--active   { background: rgba(8,126,159,0.45); color: #fff; }
+.tool-nav__link--inactive { color: rgba(255,255,255,0.55); }
+.tool-nav__link--inactive:hover { background: rgba(8,126,159,0.2); color: rgba(255,255,255,0.85); }
+
 /* ── Responsive ──────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
   .main { padding: 16px 12px 48px; }
@@ -417,6 +432,7 @@ textarea:focus {
   .drop-zone { padding: 24px 12px; }
   textarea { min-height: 110px; }
   .site-header__badge { display: none; }
+  .tool-nav { display: none; }
 }
 </style>
 </head>
@@ -428,6 +444,10 @@ textarea:focus {
   <div class="site-header__divider"></div>
   <span class="site-header__title">SEO Internal Links Tool</span>
   <span class="site-header__badge">Internes Tool</span>
+  <nav class="tool-nav">
+    <a href="index.html" class="tool-nav__link tool-nav__link--active">Link Converter</a>
+    <a href="monitor.html" class="tool-nav__link tool-nav__link--inactive">SF Monitor</a>
+  </nav>
 </header>
 
 <!-- ── Main ────────────────────────────────────────────────────────────── -->

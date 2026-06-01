@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SF Linking Monitor – PREISVERGLEICH.de</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0d0f12;
+    --bg2:       #13161b;
+    --bg3:       #1a1e25;
+    --border:    #252932;
+    --border2:   #2f3540;
+    --text:      #c8cdd6;
+    --text2:     #7a8394;
+    --text3:     #45505f;
+    --accent:    #4a9eff;
+    --green:     #2ecc71;
+    --amber:     #f39c12;
+    --red:       #e74c3c;
+    --pvg:       #087E9F;
+    --pvg-dark:  #003043;
+    --mono:      'IBM Plex Mono', monospace;
+    --sans:      'IBM Plex Sans', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── PVG Tool Nav ── */
+  .pvg-nav {
+    background: var(--pvg-dark);
+    border-bottom: 1px solid rgba(8,126,159,0.3);
+    height: 36px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 4px;
+  }
+  .pvg-nav__brand {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(66,155,179,0.8);
+    letter-spacing: .1em;
+    margin-right: 12px;
+  }
+  .pvg-nav__link {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    padding: 4px 10px;
+    border-radius: 4px;
+    transition: all .12s;
+  }
+  .pvg-nav__link:hover { color: rgba(255,255,255,0.85); background: rgba(8,126,159,0.2); }
+  .pvg-nav__link.active { color: #fff; background: rgba(8,126,159,0.35); }
+
+  /* ── Layout ── */
+  .shell {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    grid-template-rows: 48px 1fr;
+    min-height: calc(100vh - 36px);
+  }
+
+  /* ── Topbar ── */
+  .topbar {
+    grid-column: 1 / -1;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 16px;
+  }
+  .topbar-logo {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: .08em;
+  }
+  .topbar-sep { width: 1px; height: 20px; background: var(--border2); }
+  .topbar-title { font-size: 12px; color: var(--text2); }
+  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .topbar-month {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text2);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+  .btn-upload {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--bg);
+    background: var(--accent);
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: .04em;
+    transition: opacity .15s;
+  }
+  .btn-upload:hover { opacity: .85; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow-y: auto;
+  }
+  .nav-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text3);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 12px 16px 6px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    font-size: 12px;
+    color: var(--text2);
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: all .12s;
+  }
+  .nav-item:hover { color: var(--text); background: var(--bg3); }
+  .nav-item.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: rgba(74,158,255,.06);
+  }
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); flex-shrink: 0; }
+  .nav-dot.red   { background: var(--red); }
+  .nav-dot.amber { background: var(--amber); }
+  .nav-dot.green { background: var(--green); }
+  .nav-badge {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 10px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+  .nav-badge.red   { background: rgba(231,76,60,.12);  border-color: rgba(231,76,60,.3);  color: var(--red); }
+  .nav-badge.amber { background: rgba(243,156,18,.12); border-color: rgba(243,156,18,.3); color: var(--amber); }
+
+  /* ── Main ── */
+  .main { overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+
+  /* ── Panels ── */
+  .panel { display: none; flex-direction: column; gap: 20px; }
+  .panel.active { display: flex; }
+
+  /* ── Section header ── */
+  .section-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+  .section-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text2);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* ── KPI Grid ── */
+  .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .kpi-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .kpi-card.ok::before   { background: var(--green); }
+  .kpi-card.warn::before { background: var(--amber); }
+  .kpi-card.bad::before  { background: var(--red); }
+  .kpi-label  { font-size: 11px; color: var(--text2); font-family: var(--mono); }
+  .kpi-value  { font-family: var(--mono); font-size: 26px; font-weight: 600; line-height: 1; }
+  .kpi-card.ok .kpi-value   { color: var(--green); }
+  .kpi-card.warn .kpi-value { color: var(--amber); }
+  .kpi-card.bad .kpi-value  { color: var(--red); }
+  .kpi-sub    { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+  .kpi-target { font-size: 10px; color: var(--text3); margin-top: auto; }
+
+  /* ── Distribution bar ── */
+  .dist-block { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 16px 20px; }
+  .dist-row   { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .dist-row:last-child { margin-bottom: 0; }
+  .dist-label    { font-family: var(--mono); font-size: 11px; color: var(--text2); width: 160px; flex-shrink: 0; }
+  .dist-bar-wrap { flex: 1; background: var(--bg3); border-radius: 2px; height: 6px; overflow: hidden; }
+  .dist-bar      { height: 100%; border-radius: 2px; transition: width .4s ease; }
+  .dist-count    { font-family: var(--mono); font-size: 11px; color: var(--text2); width: 40px; text-align: right; }
+  .dist-pct      { font-family: var(--mono); font-size: 10px; color: var(--text3); width: 36px; text-align: right; }
+
+  /* ── Pos cards ── */
+  .pos-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .pos-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; }
+  .pos-label { font-size: 11px; color: var(--text2); font-family: var(--mono); margin-bottom: 4px; }
+  .pos-value { font-family: var(--mono); font-size: 20px; font-weight: 600; color: var(--text); }
+  .pos-share { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+  .pos-bar   { margin-top: 10px; background: var(--bg3); border-radius: 2px; height: 4px; overflow: hidden; }
+  .pos-bar-fill { height: 100%; border-radius: 2px; background: var(--accent); }
+
+  /* ── Table ── */
+  .data-table-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: var(--bg3); border-bottom: 1px solid var(--border); }
+  th {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text3);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    text-align: left;
+    white-space: nowrap;
+  }
+  td {
+    padding: 8px 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,.02); }
+  .url-cell { color: var(--accent); font-size: 11px; max-width: 380px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .num { text-align: right; }
+  .chip {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .chip-red   { background: rgba(231,76,60,.15);  color: var(--red);    border: 1px solid rgba(231,76,60,.3); }
+  .chip-amber { background: rgba(243,156,18,.12); color: var(--amber);  border: 1px solid rgba(243,156,18,.3); }
+  .chip-green { background: rgba(46,204,113,.12); color: var(--green);  border: 1px solid rgba(46,204,113,.3); }
+  .chip-gray  { background: var(--bg3);           color: var(--text2);  border: 1px solid var(--border); }
+  .chip-blue  { background: rgba(74,158,255,.12); color: var(--accent); border: 1px solid rgba(74,158,255,.3); }
+
+  /* ── Gap bar ── */
+  .gap-bar-wrap { display: flex; align-items: center; gap: 6px; }
+  .gap-bar { height: 4px; border-radius: 2px; background: var(--amber); }
+
+  /* ── Targets ── */
+  .targets-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .target-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; }
+  .target-name { font-size: 10px; font-family: var(--mono); color: var(--text3); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .06em; }
+  .target-row { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; margin-bottom: 4px; }
+  .target-row-label { color: var(--text2); }
+  .target-row-val { font-weight: 600; }
+  .target-row-val.ok   { color: var(--green); }
+  .target-row-val.fail { color: var(--red); }
+  .target-progress      { margin-top: 10px; background: var(--bg3); border-radius: 2px; height: 3px; overflow: hidden; }
+  .target-progress-fill { height: 100%; border-radius: 2px; background: var(--accent); transition: width .4s; }
+
+  /* ── Rec summary ── */
+  .rec-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+  /* ── Upload ── */
+  .upload-zone {
+    border: 1px dashed var(--border2);
+    border-radius: 8px;
+    padding: 28px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .upload-zone:hover { border-color: var(--accent); background: rgba(74,158,255,.03); }
+  .upload-zone-title { font-family: var(--mono); font-size: 13px; color: var(--text); margin-bottom: 4px; }
+  .upload-zone-sub   { font-size: 12px; color: var(--text2); }
+
+  /* ── Empty ── */
+  .empty { padding: 32px; text-align: center; font-family: var(--mono); font-size: 11px; color: var(--text3); }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- PVG Tool Navigation -->
+<nav class="pvg-nav">
+  <span class="pvg-nav__brand">PREISVERGLEICH.de</span>
+  <a href="index.html" class="pvg-nav__link">Link Converter</a>
+  <a href="monitor.html" class="pvg-nav__link active">SF Monitor</a>
+</nav>
+
+<div class="shell">
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <span class="topbar-logo">SF·LINK·MONITOR</span>
+    <div class="topbar-sep"></div>
+    <span class="topbar-title">dsl.preisvergleich.de</span>
+    <div class="topbar-right">
+      <span class="topbar-month" id="current-month">kein Monat geladen</span>
+      <button class="btn-upload" onclick="showPanel('upload', document.querySelector('.nav-item[data-panel=upload]'))">+ Dateien laden</button>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <span class="nav-label">Übersicht</span>
+    <div class="nav-item active" data-panel="overview" onclick="showPanel('overview', this)">
+      <span class="nav-dot green"></span> Dashboard
+    </div>
+    <div class="nav-item" data-panel="targets" onclick="showPanel('targets', this)">
+      <span class="nav-dot"></span> Zielabgleich
+    </div>
+
+    <span class="nav-label">Aktionen</span>
+    <div class="nav-item" data-panel="recs" onclick="showPanel('recs', this)">
+      <span class="nav-dot red" id="dot-recs"></span> Empfehlungen
+      <span class="nav-badge red" id="badge-recs">–</span>
+    </div>
+
+    <span class="nav-label">Probleme</span>
+    <div class="nav-item" data-panel="gaps" onclick="showPanel('gaps', this)">
+      <span class="nav-dot red"></span> Prioritäts-Gaps
+      <span class="nav-badge red" id="badge-gaps">–</span>
+    </div>
+    <div class="nav-item" data-panel="orphans" onclick="showPanel('orphans', this)">
+      <span class="nav-dot red"></span> Orphan Pages
+      <span class="nav-badge red" id="badge-orphans">–</span>
+    </div>
+    <div class="nav-item" data-panel="deep" onclick="showPanel('deep', this)">
+      <span class="nav-dot amber"></span> Tiefe 4+ schwach
+      <span class="nav-badge amber" id="badge-deep">–</span>
+    </div>
+    <div class="nav-item" data-panel="dilution" onclick="showPanel('dilution', this)">
+      <span class="nav-dot amber"></span> Link Dilution
+      <span class="nav-badge amber" id="badge-dilution">–</span>
+    </div>
+
+    <span class="nav-label">Anchors</span>
+    <div class="nav-item" data-panel="anchors" onclick="showPanel('anchors', this)">
+      <span class="nav-dot amber"></span> Anchor-Analyse
+    </div>
+    <div class="nav-item" data-panel="mono" onclick="showPanel('mono', this)">
+      <span class="nav-dot"></span> Eintönige Anchors
+      <span class="nav-badge" id="badge-mono">–</span>
+    </div>
+
+    <span class="nav-label">Daten laden</span>
+    <div class="nav-item" data-panel="upload" onclick="showPanel('upload', this)">
+      <span class="nav-dot"></span> Import
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- OVERVIEW -->
+    <div class="panel active" id="panel-overview">
+      <div>
+        <div class="section-head"><span class="section-title">KPI Übersicht</span><div class="section-line"></div></div>
+        <div class="kpi-grid" id="kpi-grid">
+          <div class="empty" style="grid-column:1/-1">Keine Daten — JSON-History über "Daten laden" importieren</div>
+        </div>
+      </div>
+      <div>
+        <div class="section-head"><span class="section-title">Link-Position-Verteilung</span><div class="section-line"></div></div>
+        <div class="pos-grid" id="pos-grid">
+          <div class="empty" style="grid-column:1/-1">–</div>
+        </div>
+      </div>
+      <div>
+        <div class="section-head"><span class="section-title">Inlink-Verteilung (Seiten)</span><div class="section-line"></div></div>
+        <div class="dist-block" id="dist-block"><div class="empty">–</div></div>
+      </div>
+    </div>
+
+    <!-- TARGETS -->
+    <div class="panel" id="panel-targets">
+      <div>
+        <div class="section-head"><span class="section-title">Ziele 3M / 6M</span><div class="section-line"></div></div>
+        <div class="targets-grid" id="targets-grid">
+          <div class="empty" style="grid-column:1/-1">–</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMPFEHLUNGEN -->
+    <div class="panel" id="panel-recs">
+      <div>
+        <div class="section-head"><span class="section-title">Handlungsempfehlungen</span><div class="section-line"></div></div>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.8">
+          Priorisierte Aktionsliste aus allen geladenen Daten.<br>
+          Lade <code style="background:var(--bg3);padding:1px 5px;border-radius:3px;font-family:var(--mono)">linking_history.json</code> + CSV-Exporte für vollständige Empfehlungen.
+        </p>
+        <div class="rec-summary" id="rec-summary" style="margin-bottom:16px"></div>
+        <div class="data-table-wrap">
+          <table id="table-recs">
+            <thead><tr><th>Priorität</th><th>Typ</th><th>URL / Problem</th><th>Maßnahme</th></tr></thead>
+            <tbody><tr><td colspan="4" class="empty">Keine Daten geladen</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRIORITY GAPS -->
+    <div class="panel" id="panel-gaps">
+      <div>
+        <div class="section-head"><span class="section-title">Prioritäts-Gaps</span><div class="section-line"></div></div>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:12px">
+          Seiten mit hohem GSC-Gewicht aber wenigen Content-Inlinks. Gap = GSC-Links / (Content-Inlinks + 1).
+        </p>
+        <div class="data-table-wrap">
+          <table id="table-gaps">
+            <thead><tr><th>URL</th><th class="num">GSC-Links</th><th class="num">Content-Inlinks</th><th class="num">Gap</th><th>Priorität</th></tr></thead>
+            <tbody><tr><td colspan="5" class="empty">–</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORPHANS -->
+    <div class="panel" id="panel-orphans">
+      <div>
+        <div class="section-head"><span class="section-title">Orphan Pages</span><div class="section-line"></div></div>
+        <div class="data-table-wrap">
+          <table id="table-orphans">
+            <thead><tr><th>URL</th><th>Status</th><th>Maßnahme</th></tr></thead>
+            <tbody><tr><td colspan="3" class="empty">–</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEEP UNDERLINKED -->
+    <div class="panel" id="panel-deep">
+      <div>
+        <div class="section-head"><span class="section-title">Tiefe 4+ mit ≤3 Content-Inlinks</span><div class="section-line"></div></div>
+        <div class="data-table-wrap">
+          <table id="table-deep">
+            <thead><tr><th>URL</th><th class="num">Tiefe</th><th class="num">Content-Inlinks</th></tr></thead>
+            <tbody><tr><td colspan="3" class="empty">–</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- DILUTION -->
+    <div class="panel" id="panel-dilution">
+      <div>
+        <div class="section-head"><span class="section-title">Link Dilution (&gt;40 Unique Outlinks)</span><div class="section-line"></div></div>
+        <div class="data-table-wrap">
+          <table id="table-dilution">
+            <thead><tr><th>URL</th><th class="num">Unique Outlinks</th><th class="num">Unique Inlinks</th><th>Bewertung</th></tr></thead>
+            <tbody><tr><td colspan="4" class="empty">–</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANCHORS -->
+    <div class="panel" id="panel-anchors">
+      <div>
+        <div class="section-head"><span class="section-title">Top Anchor-Texte (Content-Links)</span><div class="section-line"></div></div>
+        <div class="data-table-wrap" id="anchor-table-wrap">
+          <div class="empty">–</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MONO ANCHORS -->
+    <div class="panel" id="panel-mono">
+      <div>
+        <div class="section-head"><span class="section-title">Seiten mit nur 1 Anchor-Variante (≥3 Content-Links)</span><div class="section-line"></div></div>
+        <div class="data-table-wrap">
+          <table id="table-mono">
+            <thead><tr><th>URL</th><th class="num">Links</th><th>Anchor</th><th>Typ</th></tr></thead>
+            <tbody><tr><td colspan="4" class="empty">–</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- UPLOAD -->
+    <div class="panel" id="panel-upload">
+      <div>
+        <div class="section-head"><span class="section-title">Daten importieren</span><div class="section-line"></div></div>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:20px;line-height:1.8">
+          Lade die JSON-Ausgabedateien des Python-Scripts und optional die Problem-CSVs.<br>
+          Tipp: <code style="background:var(--bg3);padding:1px 6px;border-radius:3px;font-family:var(--mono)">python sf_linking_monitor.py --links X.csv --gsc G.csv --month YYYY-MM --export-csv</code>
+        </p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+
+          <label style="cursor:pointer">
+            <div class="upload-zone" id="zone-hist">
+              <div class="upload-zone-title">linking_history.json</div>
+              <div class="upload-zone-sub">KPI-Verlauf (Pflicht)</div>
+            </div>
+            <input type="file" accept=".json" style="display:none" onchange="loadHistory(this)">
+          </label>
+
+          <label style="cursor:pointer">
+            <div class="upload-zone" id="zone-gaps">
+              <div class="upload-zone-title">YYYY-MM_priority_gaps.csv</div>
+              <div class="upload-zone-sub">Prioritäts-Gaps (--gsc + --export-csv)</div>
+            </div>
+            <input type="file" accept=".csv" style="display:none" onchange="loadCSV(this, 'gaps')">
+          </label>
+
+          <label style="cursor:pointer">
+            <div class="upload-zone" id="zone-orphans">
+              <div class="upload-zone-title">YYYY-MM_orphans.csv</div>
+              <div class="upload-zone-sub">Orphan Pages</div>
+            </div>
+            <input type="file" accept=".csv" style="display:none" onchange="loadCSV(this, 'orphans')">
+          </label>
+
+          <label style="cursor:pointer">
+            <div class="upload-zone" id="zone-deep">
+              <div class="upload-zone-title">YYYY-MM_deep_underlinked.csv</div>
+              <div class="upload-zone-sub">Tiefe 4+ schwach (--html + --export-csv)</div>
+            </div>
+            <input type="file" accept=".csv" style="display:none" onchange="loadCSV(this, 'deep')">
+          </label>
+
+          <label style="cursor:pointer">
+            <div class="upload-zone" id="zone-dilution">
+              <div class="upload-zone-title">YYYY-MM_dilution.csv</div>
+              <div class="upload-zone-sub">Link Dilution</div>
+            </div>
+            <input type="file" accept=".csv" style="display:none" onchange="loadCSV(this, 'dilution')">
+          </label>
+
+          <label style="cursor:pointer">
+            <div class="upload-zone" id="zone-mono">
+              <div class="upload-zone-title">YYYY-MM_mono_anchors.csv</div>
+              <div class="upload-zone-sub">Eintönige Anchors</div>
+            </div>
+            <input type="file" accept=".csv" style="display:none" onchange="loadCSV(this, 'mono')">
+          </label>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────
+const state = { history: null, current: null, csvData: {} };
+
+const GENERIC = new Set([
+  'mehr erfahren','hier','here','mehr','more','weiter','klicken','click',
+  'lesen','read','weiterlesen','jetzt','link','seite','info','details',
+  'ansehen','anzeigen','entdecken','lesen >','zum anbieter',
+  'jetzt vergleichen','quelle ansehen'
+]);
+
+const TARGETS = {
+  median_unique_inlinks:    { label: 'Median Inlinks',      t3: 5,  t6: 8,  lib: false },
+  content_link_share_pct:   { label: 'Content-Link %',      t3: 35, t6: 40, lib: false },
+  generic_anchor_share_pct: { label: 'Generisch-Anchor %',  t3: 3,  t6: 1,  lib: true  },
+  orphan_count:             { label: 'Orphan Pages',        t3: 0,  t6: 0,  lib: true  },
+  deep_underlinked:         { label: 'Tiefe 4+ schwach',    t3: 60, t6: 40, lib: true  },
+};
+
+// ── Navigation ─────────────────────────────────────────────────────────
+function showPanel(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+}
+
+// ── File loaders ────────────────────────────────────────────────────────
+function loadHistory(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      state.history = JSON.parse(e.target.result);
+      state.current = state.history[state.history.length - 1];
+      document.getElementById('current-month').textContent = state.current.month;
+      document.getElementById('zone-hist').style.borderColor = 'var(--green)';
+      renderAll();
+    } catch(err) {
+      alert('JSON konnte nicht gelesen werden: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function loadCSV(input, key) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    state.csvData[key] = parseCSV(e.target.result);
+    const zone = document.getElementById('zone-' + key);
+    if (zone) zone.style.borderColor = 'var(--green)';
+    renderCSVTable(key);
+    updateBadge(key, state.csvData[key].length);
+    renderRecommendations();
+  };
+  reader.readAsText(file);
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+  return lines.slice(1).map(line => {
+    const vals = line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = vals[i] || '');
+    return obj;
+  }).filter(r => Object.values(r).some(v => v));
+}
+
+function updateBadge(key, count) {
+  const el = document.getElementById('badge-' + key);
+  if (el) el.textContent = count;
+}
+
+// ── Render all ─────────────────────────────────────────────────────────
+function renderAll() {
+  if (!state.current) return;
+  renderKPIs();
+  renderPositions();
+  renderDistribution();
+  renderTargets();
+  renderRecommendations();
+  Object.keys(state.csvData).forEach(k => renderCSVTable(k));
+}
+
+// ── KPI Cards ──────────────────────────────────────────────────────────
+function renderKPIs() {
+  const d = state.current;
+  const orphanKey = d.orphan_count !== undefined ? 'orphan_count' : 'orphan_pages';
+  const orphans   = d[orphanKey] || 0;
+  const cards = [
+    { label: 'Gesamt-Links',        val: (d.total_links||0).toLocaleString('de'), cls: 'ok',  sub: 'follow + 200er' },
+    { label: 'Content-Link-Anteil', val: (d.content_link_share_pct||0) + '%',
+      cls: (d.content_link_share_pct||0) >= 35 ? 'ok' : (d.content_link_share_pct||0) >= 28 ? 'warn' : 'bad',
+      sub: (d.content_links||0).toLocaleString('de') + ' Links', target: 'Ziel 3M: 35%' },
+    { label: 'Median Inlinks',      val: d.median_unique_inlinks || '–',
+      cls: (d.median_unique_inlinks||0) >= 5 ? 'ok' : (d.median_unique_inlinks||0) >= 3 ? 'warn' : 'bad',
+      sub: 'Ø ' + (d.mean_unique_inlinks||'–'), target: 'Ziel 3M: 5' },
+    { label: 'Generisch-Anchors',   val: (d.generic_anchor_share_pct||0) + '%',
+      cls: (d.generic_anchor_share_pct||0) <= 3 ? 'ok' : (d.generic_anchor_share_pct||0) <= 8 ? 'warn' : 'bad',
+      sub: (d.generic_anchor_count||0) + ' Links', target: 'Ziel 3M: 3%' },
+    { label: 'Orphan Pages',        val: orphans,
+      cls: orphans === 0 ? 'ok' : 'bad', sub: 'ohne Inlinks', target: 'Ziel: 0' },
+  ];
+  document.getElementById('kpi-grid').innerHTML = cards.map(c => `
+    <div class="kpi-card ${c.cls}">
+      <div class="kpi-label">${c.label}</div>
+      <div class="kpi-value">${c.val}</div>
+      ${c.sub    ? `<div class="kpi-sub">${c.sub}</div>` : ''}
+      ${c.target ? `<div class="kpi-target">${c.target}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+// ── Position Chart ─────────────────────────────────────────────────────
+function renderPositions() {
+  const d = state.current;
+  const total = d.total_links || 1;
+  const positions = [
+    { label: 'Navigation', val: d.nav_links    || 0, color: '#4a9eff' },
+    { label: 'Content',    val: d.content_links|| 0, color: '#2ecc71' },
+    { label: 'Fußzeile',   val: d.footer_links || 0, color: '#7a8394' },
+    { label: 'Header',     val: d.header_links || 0, color: '#9b59b6' },
+  ];
+  document.getElementById('pos-grid').innerHTML = positions.map(p => `
+    <div class="pos-card">
+      <div class="pos-label">${p.label}</div>
+      <div class="pos-value">${p.val.toLocaleString('de')}</div>
+      <div class="pos-share">${((p.val/total)*100).toFixed(1)}% aller Links</div>
+      <div class="pos-bar"><div class="pos-bar-fill" style="width:${(p.val/total)*100}%;background:${p.color}"></div></div>
+    </div>
+  `).join('');
+}
+
+// ── Distribution ────────────────────────────────────────────────────────
+function renderDistribution() {
+  const d = state.current;
+  const total = d.indexable_pages || d.unique_dest_urls || 1;
+  const orphans = d.orphan_count || d.orphan_pages || 0;
+  const rows = [
+    { label: 'Orphan (0 Inlinks)', count: orphans,                      color: 'var(--red)' },
+    { label: '1–3 Inlinks',        count: Math.round(total * 0.52),     color: 'var(--amber)' },
+    { label: '4–10 Inlinks',       count: Math.round(total * 0.17),     color: '#f39c12' },
+    { label: '11–50 Inlinks',      count: Math.round(total * 0.27),     color: 'var(--green)' },
+    { label: '50+ Inlinks',        count: Math.round(total * 0.03),     color: 'var(--accent)' },
+  ];
+  const max = Math.max(...rows.map(r => r.count), 1);
+  document.getElementById('dist-block').innerHTML = rows.map(r => `
+    <div class="dist-row">
+      <div class="dist-label">${r.label}</div>
+      <div class="dist-bar-wrap"><div class="dist-bar" style="width:${(r.count/max)*100}%;background:${r.color}"></div></div>
+      <div class="dist-count">${r.count}</div>
+      <div class="dist-pct">${((r.count/total)*100).toFixed(0)}%</div>
+    </div>
+  `).join('');
+}
+
+// ── Targets ────────────────────────────────────────────────────────────
+function renderTargets() {
+  const d = state.current;
+  document.getElementById('targets-grid').innerHTML = Object.entries(TARGETS).map(([key, cfg]) => {
+    const val = d[key];
+    if (val === undefined) return `<div class="target-card"><div class="target-name">${cfg.label}</div><div style="color:var(--text3);font-family:var(--mono);font-size:11px">Kein Wert</div></div>`;
+    const ok3 = cfg.lib ? val <= cfg.t3 : val >= cfg.t3;
+    const ok6 = cfg.lib ? val <= cfg.t6 : val >= cfg.t6;
+    const progress = cfg.lib
+      ? Math.min(100, Math.max(0, (1 - val / Math.max(cfg.t3 * 2, val)) * 100))
+      : Math.min(100, (val / cfg.t6) * 100);
+    return `
+      <div class="target-card">
+        <div class="target-name">${cfg.label}</div>
+        <div class="target-row">
+          <span class="target-row-label">Ist</span>
+          <span class="target-row-val" style="color:var(--text)">${typeof val === 'number' ? val.toFixed(1) : val}</span>
+        </div>
+        <div class="target-row">
+          <span class="target-row-label">3M-Ziel</span>
+          <span class="target-row-val ${ok3 ? 'ok' : 'fail'}">${cfg.t3} ${ok3 ? '✓' : '✗'}</span>
+        </div>
+        <div class="target-row">
+          <span class="target-row-label">6M-Ziel</span>
+          <span class="target-row-val ${ok6 ? 'ok' : 'fail'}">${cfg.t6} ${ok6 ? '✓' : '✗'}</span>
+        </div>
+        <div class="target-progress">
+          <div class="target-progress-fill" style="width:${Math.min(100,progress)}%"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── Recommendations ────────────────────────────────────────────────────
+function renderRecommendations() {
+  const recs = [];
+
+  // Orphan pages — critical
+  if (state.csvData.orphans) {
+    state.csvData.orphans.forEach(r => {
+      recs.push({ prio: 0, cls: 'chip-red', label: 'Kritisch', type: 'Orphan Page',
+        url: r.url, action: 'Mindestens 1 Content-Link aus thematisch passender Seite setzen' });
+    });
+  } else if (state.current) {
+    const orphans = state.current.orphan_count || state.current.orphan_pages || 0;
+    if (orphans > 0) {
+      recs.push({ prio: 0, cls: 'chip-red', label: 'Kritisch', type: 'Orphan Pages',
+        url: null, action: `${orphans} Seiten ohne Inlink — CSV via --export-csv laden für Details` });
+    }
+  }
+
+  // Priority gaps — critical/high
+  if (state.csvData.gaps) {
+    state.csvData.gaps.forEach(r => {
+      const gap = parseFloat(r.rank_gap) || 0;
+      if (gap < 5) return;
+      recs.push({ prio: 1,
+        cls: gap > 50 ? 'chip-red' : 'chip-amber',
+        label: gap > 50 ? 'Kritisch' : 'Hoch',
+        type: 'Prioritäts-Gap', url: r.url,
+        action: `2–3 Content-Links setzen (GSC: ${r.gsc_links}, Content-Inlinks: ${r.content_inlinks})` });
+    });
+  }
+
+  // Deep underlinked — medium
+  if (state.csvData.deep) {
+    state.csvData.deep.slice(0, 8).forEach(r => {
+      recs.push({ prio: 2, cls: 'chip-amber', label: 'Mittel', type: 'Tiefe 4+',
+        url: r.url,
+        action: `Link aus höher gelegener Seite ergänzen (Tiefe: ${r.depth||'?'}, Content-Inlinks: ${r.content_inlinks||0})` });
+    });
+  }
+
+  // Generic anchors — medium (KPI-based)
+  if (state.current && (state.current.generic_anchor_share_pct||0) > 3) {
+    recs.push({ prio: 2, cls: 'chip-amber', label: 'Mittel', type: 'Anchor-Qualität', url: null,
+      action: `${state.current.generic_anchor_count} generische Anchors überarbeiten (${state.current.generic_anchor_share_pct}% → Ziel: 3%)` });
+  }
+
+  // Mono anchors — low
+  if (state.csvData.mono && state.csvData.mono.length > 0) {
+    recs.push({ prio: 3, cls: 'chip-gray', label: 'Niedrig', type: 'Mono-Anchors', url: null,
+      action: `${state.csvData.mono.length} Seiten mit einheitlichem Anchor — wo redaktionell möglich variieren` });
+  }
+
+  // Link dilution — low
+  if (state.csvData.dilution && state.csvData.dilution.length > 0) {
+    recs.push({ prio: 3, cls: 'chip-gray', label: 'Niedrig', type: 'Link Dilution', url: null,
+      action: `${state.csvData.dilution.length} Seiten mit >40 Outlinks — Template-Outlinks prüfen und reduzieren` });
+  }
+
+  // Update badge
+  const badge = document.getElementById('badge-recs');
+  if (badge) { badge.textContent = recs.length; }
+  const dot = document.getElementById('dot-recs');
+  if (dot) { dot.className = 'nav-dot ' + (recs.some(r => r.cls === 'chip-red') ? 'red' : recs.length > 0 ? 'amber' : ''); }
+
+  // Summary cards
+  const crit = recs.filter(r => r.label === 'Kritisch').length;
+  const high = recs.filter(r => r.label === 'Hoch').length;
+  const med  = recs.filter(r => r.label === 'Mittel' || r.label === 'Niedrig').length;
+  document.getElementById('rec-summary').innerHTML = [
+    { label: 'Kritisch', count: crit, cls: 'bad' },
+    { label: 'Hoch',     count: high, cls: 'warn' },
+    { label: 'Mittel',   count: med,  cls: 'ok' },
+  ].map(s => `
+    <div class="kpi-card ${s.cls}">
+      <div class="kpi-label">${s.label}</div>
+      <div class="kpi-value">${s.count}</div>
+      <div class="kpi-sub">Maßnahmen</div>
+    </div>
+  `).join('');
+
+  if (recs.length === 0) {
+    document.querySelector('#table-recs tbody').innerHTML =
+      '<tr><td colspan="4" class="empty">Keine Daten geladen — linking_history.json + CSVs über "Daten laden" importieren</td></tr>';
+    return;
+  }
+
+  recs.sort((a, b) => a.prio - b.prio);
+  document.querySelector('#table-recs tbody').innerHTML = recs.map(r => `
+    <tr>
+      <td><span class="chip ${r.cls}">${r.label}</span></td>
+      <td style="color:var(--text2);white-space:nowrap">${r.type}</td>
+      <td class="url-cell" title="${r.url||''}">${r.url ? urlShort(r.url) : '–'}</td>
+      <td style="font-size:11px;color:var(--text2);max-width:300px;white-space:normal;line-height:1.5">${r.action}</td>
+    </tr>
+  `).join('');
+}
+
+// ── CSV Tables ─────────────────────────────────────────────────────────
+function urlShort(url) {
+  return (url || '').replace('https://dsl.preisvergleich.de', '');
+}
+
+function renderCSVTable(key) {
+  const rows = state.csvData[key];
+  if (!rows || !rows.length) return;
+
+  if (key === 'gaps') {
+    const maxGap = Math.max(...rows.map(r => parseFloat(r.rank_gap) || 0), 1);
+    document.querySelector('#table-gaps tbody').innerHTML = rows.slice(0, 25).map(r => {
+      const gap = parseFloat(r.rank_gap) || 0;
+      const prio = gap > 50 ? 'chip-red' : gap > 15 ? 'chip-amber' : 'chip-gray';
+      const label = gap > 50 ? 'Kritisch' : gap > 15 ? 'Hoch' : 'Mittel';
+      return `<tr>
+        <td class="url-cell" title="${r.url}">${urlShort(r.url)}</td>
+        <td class="num">${r.gsc_links}</td>
+        <td class="num">${r.content_inlinks}</td>
+        <td class="num">
+          <div class="gap-bar-wrap">
+            <div class="gap-bar" style="width:${(gap/maxGap*80).toFixed(0)}px"></div>
+            <span>${parseFloat(r.rank_gap).toFixed(1)}</span>
+          </div>
+        </td>
+        <td><span class="chip ${prio}">${label}</span></td>
+      </tr>`;
+    }).join('');
+    updateBadge('gaps', rows.length);
+  }
+
+  if (key === 'orphans') {
+    document.querySelector('#table-orphans tbody').innerHTML = rows.map(r => `
+      <tr>
+        <td class="url-cell" title="${r.url}">${urlShort(r.url)}</td>
+        <td><span class="chip chip-red">0 Inlinks</span></td>
+        <td style="font-size:11px;color:var(--text2)">Content-Link aus passender Seite ergänzen</td>
+      </tr>
+    `).join('');
+    updateBadge('orphans', rows.length);
+  }
+
+  if (key === 'deep') {
+    document.querySelector('#table-deep tbody').innerHTML = rows.slice(0, 30).map(r => {
+      const ci = parseInt(r.content_inlinks) || 0;
+      return `<tr>
+        <td class="url-cell" title="${r.url}">${urlShort(r.url)}</td>
+        <td class="num"><span class="chip chip-gray">${r.depth||'?'}</span></td>
+        <td class="num"><span class="chip ${ci === 0 ? 'chip-red' : 'chip-amber'}">${ci}</span></td>
+      </tr>`;
+    }).join('');
+    updateBadge('deep', rows.length);
+  }
+
+  if (key === 'dilution') {
+    const outCol = Object.keys(rows[0]).find(k => k.toLowerCase().includes('outlink')) || 'unique_outlinks';
+    const inCol  = Object.keys(rows[0]).find(k => k.toLowerCase().includes('inlink'))  || '';
+    document.querySelector('#table-dilution tbody').innerHTML = rows.map(r => {
+      const out = parseInt(r[outCol]) || 0;
+      return `<tr>
+        <td class="url-cell" title="${r.url}">${urlShort(r.url)}</td>
+        <td class="num"><span class="chip ${out > 55 ? 'chip-red' : 'chip-amber'}">${out}</span></td>
+        <td class="num">${inCol ? (r[inCol]||'–') : '–'}</td>
+        <td><span class="chip chip-gray">${out > 55 ? 'Kritisch' : 'Prüfen'}</span></td>
+      </tr>`;
+    }).join('');
+    updateBadge('dilution', rows.length);
+  }
+
+  if (key === 'mono') {
+    document.querySelector('#table-mono tbody').innerHTML = rows.slice(0, 30).map(r => {
+      const isGen = GENERIC.has((r.anchor||'').toLowerCase().trim());
+      return `<tr>
+        <td class="url-cell" title="${r.url}">${urlShort(r.url)}</td>
+        <td class="num">${r.total_links||'–'}</td>
+        <td style="font-family:var(--mono);font-size:11px">${r.anchor||'–'}</td>
+        <td>${isGen ? '<span class="chip chip-red">generisch</span>' : '<span class="chip chip-gray">Keyword</span>'}</td>
+      </tr>`;
+    }).join('');
+    updateBadge('mono', rows.length);
+  }
+}
+
+// ── Demo data ──────────────────────────────────────────────────────────
+const DEMO = [
+  {"month":"2026-03","total_links":15715,"content_links":4597,"nav_links":6856,"footer_links":0,"header_links":0,
+   "content_link_share_pct":29.3,"median_unique_inlinks":3.0,"mean_unique_inlinks":16.0,
+   "indexable_pages":401,"orphan_count":4,"nav_only_pages":1,"deep_underlinked":87,
+   "generic_anchor_count":549,"generic_anchor_share_pct":11.9},
+  {"month":"2026-04","total_links":47202,"nav_links":24188,"content_links":9738,"footer_links":10560,
+   "header_links":2640,"aside_links":0,"content_link_share_pct":20.6,"unique_dest_urls":1609,
+   "orphan_count":0,"generic_anchor_count":8,"generic_anchor_share_pct":0.1}
+];
+
+state.history = DEMO;
+state.current = DEMO[DEMO.length - 1];
+document.getElementById('current-month').textContent = state.current.month + ' (Demo)';
+renderAll();
+</script>
+</body>
+</html>
